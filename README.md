@@ -1,22 +1,51 @@
-# Reto Tiburón — Versión 1
+# Reto Tiburón — Versión 1.3 con audio
 
-Aplicación web instalable (PWA) para probar en celular.
+Aplicación web instalable (PWA) para probar en celular y publicar en GitHub Pages.
 
 ## Funciones incluidas
 
-- Inicio de sesión local por nombre y número de sucursal.
-- Diseño móvil inspirado en la interfaz aprobada.
+- Inicio local por nombre y número de sucursal.
+- Diseño móvil con el tiburón oficial.
 - 30 misiones diferentes de venta y ejecución comercial.
-- Validación de metas por porcentaje, piezas, operaciones, cañonetos o pesos.
+- Validación por porcentaje, piezas, operaciones, cañonetos o pesos.
 - Netopesos, bonos de racha, avance mensual y evidencias opcionales.
 - Ranking de tiendas de demostración.
 - Calendario completo de misiones.
 - Guardado local en el dispositivo.
 - Instalación como app y funcionamiento sin conexión después de la primera carga.
 
-## Probarla en computadora
+## Audio nuevo de la V1.3
 
-La PWA debe abrirse desde un servidor local, no haciendo doble clic en `index.html`:
+- Música original de fondo en bucle.
+- Música más intensa durante retos semanales y la gran final.
+- Sonido al pulsar botones.
+- Sonido de monedas al ganar netopesos.
+- Fanfarria de misión cumplida.
+- Sonido de error cuando no se alcanza la meta.
+- Celebración cada tres días de racha.
+- Sonido especial al subir de posición en el ranking.
+- Controles separados para música y efectos.
+- Controles de volumen con preferencias guardadas en el celular.
+
+Los navegadores móviles no permiten iniciar música antes del primer toque. La música comienza al pulsar **Comenzar reto**, **Modo demostración** o el botón **Activar música y sonidos**.
+
+## Publicar en GitHub Pages
+
+1. Descomprime el ZIP.
+2. Reemplaza en el repositorio todos los archivos anteriores por los de esta carpeta.
+3. Sube también la carpeta completa `assets`, incluida `assets/audio`.
+4. Confirma con **Commit changes**.
+5. Espera unos minutos y abre la app agregando `?v=13` al final de la dirección para evitar la caché anterior.
+
+Ejemplo:
+
+```text
+https://TU-USUARIO.github.io/reto-tiburon/?v=13
+```
+
+## Probar en computadora
+
+La PWA debe abrirse desde un servidor local:
 
 ```bash
 python3 -m http.server 8080
@@ -24,16 +53,6 @@ python3 -m http.server 8080
 
 Después abre `http://localhost:8080`.
 
-## Probarla en celular
+## Alcance
 
-1. Sube la carpeta a un hosting HTTPS como Netlify, Vercel, GitHub Pages o un servidor propio.
-2. Abre la dirección desde Chrome o Safari.
-3. Usa “Agregar a pantalla de inicio” o la opción “Instalar en el celular” del menú.
-
-## Alcance de esta V1
-
-El avance se guarda localmente. Para que todas las sucursales compartan un ranking real hace falta una fase de backend con usuarios, base de datos, permisos y conexión a ventas reales.
-
-
-## Corrección V1.1
-Se corrigió la pantalla de acceso que permanecía visible después de pulsar los botones y se actualizó la caché de la PWA.
+El avance se guarda localmente en cada dispositivo. Para compartir un ranking real entre todas las sucursales hace falta conectar una base de datos y un backend central.

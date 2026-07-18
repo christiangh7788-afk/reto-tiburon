@@ -1,7 +1,7 @@
 {
   "name":"Reto Tiburón",
   "short_name":"Reto Tiburón",
-  "description":"Misiones diarias de venta para sucursales.",
+  "description":"Misiones diarias de venta para sucursales con música y efectos.",
   "start_url":"./index.html",
   "display":"standalone",
   "background_color":"#021845",

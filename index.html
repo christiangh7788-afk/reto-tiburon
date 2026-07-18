@@ -7,7 +7,7 @@
   <meta name="description" content="Reto Tiburón: misiones diarias de venta para sucursales.">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=1.3">
   <title>Reto Tiburón</title>
 </head>
 <body>
@@ -39,6 +39,13 @@
       <button class="drawer-option" id="calendarButton" type="button">Calendario de 30 misiones</button>
       <button class="drawer-option" id="profileButton" type="button">Perfil de la sucursal</button>
       <button class="drawer-option" id="installButton" type="button" hidden>Instalar en el celular</button>
+      <section class="audio-settings" aria-label="Configuración de audio">
+        <strong>Audio del juego</strong>
+        <button class="audio-toggle" id="musicToggle" type="button" aria-pressed="true"><span>🎵 Música</span><b>Activada</b></button>
+        <label class="volume-control">Volumen de música<input id="musicVolume" type="range" min="0" max="1" step="0.05" value="0.35"></label>
+        <button class="audio-toggle" id="effectsToggle" type="button" aria-pressed="true"><span>🔔 Efectos</span><b>Activados</b></button>
+        <label class="volume-control">Volumen de efectos<input id="effectsVolume" type="range" min="0" max="1" step="0.05" value="0.75"></label>
+      </section>
       <button class="drawer-option danger" id="resetButton" type="button">Reiniciar progreso</button>
       <button class="drawer-option" id="logoutButton" type="button">Cambiar de tienda</button>
     </aside>
@@ -49,6 +56,8 @@
       <p>La racha agrega hasta 100 netopesos extra.</p>
       <p>El ranking se actualiza después de validar.</p>
     </section>
+
+    <button class="audio-unlock" id="audioUnlockBanner" type="button" hidden>🔊 Toca para activar música y sonidos</button>
 
     <section class="stats" aria-label="Resumen del reto">
       <article class="stat-card">
@@ -76,7 +85,7 @@
         </div>
         <div class="goal-pill" id="goalValue">Meta: $10,000 MXN</div>
       </article>
-      <img class="mascot" src="assets/tiburon.png" alt="Tiburón neto señalando la misión del día">
+      <img class="mascot" src="assets/tiburon.png?v=1.3" alt="Tiburón neto señalando la misión del día">
     </section>
 
     <section class="white-card progress-card">
@@ -123,7 +132,7 @@
 
   <section class="login-screen" id="loginScreen">
     <div class="login-card">
-      <img src="assets/tiburon.png" alt="Mascota Reto Tiburón">
+      <img src="assets/tiburon.png?v=1.3" alt="Mascota Reto Tiburón">
       <p class="login-eyebrow">RETO TIBURÓN</p>
       <h2>Entra con tu sucursal</h2>
       <label>Nombre de tienda<input id="storeNameInput" maxlength="45" value="Tienda Demo" autocomplete="organization"></label>
@@ -132,7 +141,7 @@
         <button id="newGameButton" type="button">Comenzar reto nuevo</button>
         <button id="demoButton" class="demo" type="button">Entrar en modo demostración</button>
       </div>
-      <small>La versión 1 guarda el avance en este dispositivo.</small>
+      <small>La versión 1.3 guarda el avance y tus preferencias de audio en este dispositivo.</small>
     </div>
   </section>
 
@@ -174,6 +183,7 @@
     </section>
   </dialog>
 
-  <script src="app.js"></script>
+  <audio id="backgroundMusic" preload="auto" loop src="assets/audio/music-casual.wav"></audio>
+  <script src="app.js?v=1.3"></script>
 </body>
 </html>
