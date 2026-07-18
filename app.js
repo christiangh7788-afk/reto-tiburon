@@ -37,7 +37,7 @@ const COMPETITORS=[
 ];
 
 const STORAGE_KEY='reto-tiburon-v1-state';
-const AUDIO_PREFS_KEY='reto-tiburon-v1-3-audio';
+const AUDIO_PREFS_KEY='reto-tiburon-v1-5-audio';
 const AUDIO_TRACKS={casual:'assets/audio/music-casual.wav',weekly:'assets/audio/music-weekly.wav'};
 const SFX_PATHS={
   click:'assets/audio/click.wav',coin:'assets/audio/coin.wav',success:'assets/audio/success.wav',
@@ -53,6 +53,8 @@ let deferredInstallPrompt=null;
 let audioUnlocked=false;
 
 function targetText(m){return m.unit==='MXN'?`$${format(m.target)} MXN`:`${format(m.target)} ${m.unit}`}
+let toastTimer=null;
+function showStatus(message){const el=$('statusMessage');if(!el)return;el.textContent=message;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),3200)}
 function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}
 function load(){
   const raw=localStorage.getItem(STORAGE_KEY);
@@ -290,7 +292,7 @@ function validateMission(event){
   state.sales=Math.min(30000,state.sales+m.monthlyValue);
   state.evidence[state.day]={result,evidence:$('evidenceInput').value.trim(),date:new Date().toISOString()};
   const newRank=currentRank(state.coins);
-  $('statusMessage').textContent=`¡Misión cumplida! Ganaste ${earned} netopesos. Bono de racha: ${bonus} NP.`;
+  showStatus(`¡Misión cumplida! Ganaste ${earned} netopesos. Bono de racha: ${bonus} NP.`);
   $('validationDialog').close();
   playSfx('coin');
   playSfx('success',180);
@@ -338,8 +340,9 @@ $('notificationButton').addEventListener('click',()=>{$('notificationPanel').hid
 $('calendarButton').addEventListener('click',()=>{openDrawer(false);buildCalendar();$('calendarDialog').showModal()});
 $('closeCalendar').addEventListener('click',()=>$('calendarDialog').close());
 $('profileButton').addEventListener('click',()=>{openDrawer(false);render();$('profileDialog').showModal()});
+$('musicTestButton').addEventListener('click',()=>{openDrawer(false);window.location.href='musica-extra.html?v=1.5'});
 $('closeProfile').addEventListener('click',()=>$('profileDialog').close());
-$('audioUnlockBanner').addEventListener('click',()=>{unlockAudio();$('statusMessage').textContent='Música y efectos activados.'});
+$('audioUnlockBanner').addEventListener('click',()=>{unlockAudio();showStatus('Música y efectos activados.')});
 
 $('musicToggle').addEventListener('click',()=>setMusicEnabled(!audioPrefs.music));
 $('effectsToggle').addEventListener('click',()=>setEffectsEnabled(!audioPrefs.sfx));
@@ -386,7 +389,7 @@ document.querySelectorAll('[data-category]').forEach(button=>button.addEventList
   if(index<0)index=MISSIONS.findIndex(m=>m.category===category);
   if(index>=0){
     state.day=index;
-    $('statusMessage').textContent=`Mostrando el siguiente reto de ${category}.`;
+    showStatus(`Mostrando el siguiente reto de ${category}.`);
     render();
     save();
   }
@@ -411,7 +414,7 @@ document.addEventListener('visibilitychange',()=>{
 });
 
 if('serviceWorker' in navigator){
-  window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js?v=1.3').catch(()=>{}));
+  window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js?v=1.5').catch(()=>{}));
 }
 
 loadAudioPrefs();

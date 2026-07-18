@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Reto Tiburón — Más músicas</title>
+<style>
+*{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:#fff;background:radial-gradient(circle at 80% 12%,#19c9ff55,transparent 25%),linear-gradient(180deg,#0756bc,#031642)}
+main{width:min(700px,100%);margin:auto;padding:22px 15px 45px}header{text-align:center}h1{margin:0;font-size:31px;font-style:italic}h1 span{color:#ff7000}header p{margin:7px 0 18px;color:#d7e6ff}
+.card{margin-top:13px;padding:15px;border-radius:20px;background:#fff;color:#08265f;box-shadow:0 7px 0 #00133e55}
+.title{display:flex;gap:10px;align-items:center}.num{width:40px;height:40px;flex:none;border-radius:50%;display:grid;place-items:center;background:linear-gradient(#ffb725,#ff6900);color:#fff;font-weight:950}
+h2{margin:0;font-size:19px}.title p{margin:3px 0 0;color:#6b7891;font-size:13px}
+.play{width:100%;margin-top:12px;border:0;border-radius:999px;padding:13px;background:linear-gradient(#ff9600,#ff6500);color:#fff;font-size:16px;font-weight:900}
+.play.playing{background:linear-gradient(#21b6ff,#0872d8)}.time{display:grid;grid-template-columns:auto 1fr auto;gap:9px;align-items:center;margin-top:10px;color:#68748b;font-size:11px}.seek{width:100%}
+.choose{width:100%;margin-top:9px;padding:10px;border:1px solid #d7ddea;border-radius:999px;background:#fff;color:#0b347e;font-weight:850}.choose.selected{background:#e6f4ff;border-color:#0b8bed}
+#status{margin-top:17px;padding:13px;border-radius:14px;background:#ffffff18;text-align:center;font-weight:800}.note{margin-top:13px;text-align:center;color:#d7e6ff;font-size:12px}
+</style>
+</head>
+<body>
+<main>
+<header><a class="back" href="index.html?v=1.5">← Volver a la app</a><h1>Reto Tiburón<span>🛒</span></h1><p>Seis opciones adicionales de música de fondo</p></header>
+<section class="card" data-src="assets/audio-extra/opcion-4-fiesta-tropical.mp3?v=1.5">
+<div class="title"><span class="num">4</span><div><h2>Fiesta tropical</h2><p>Alegre, comercial y con energía de celebración.</p></div></div>
+<button class="play" type="button">▶ Reproducir opción 4</button>
+<div class="time"><span class="current">0:00</span><input class="seek" type="range" min="0" max="100" value="0"><span class="duration">0:00</span></div>
+<button class="choose" type="button">Elegir opción 4</button>
+</section>
+<section class="card" data-src="assets/audio-extra/opcion-5-arcade-brillante.mp3?v=1.5">
+<div class="title"><span class="num">5</span><div><h2>Arcade brillante</h2><p>Rápida, juguetona y muy de videojuego móvil.</p></div></div>
+<button class="play" type="button">▶ Reproducir opción 5</button>
+<div class="time"><span class="current">0:00</span><input class="seek" type="range" min="0" max="100" value="0"><span class="duration">0:00</span></div>
+<button class="choose" type="button">Elegir opción 5</button>
+</section>
+<section class="card" data-src="assets/audio-extra/opcion-6-oceano-chill.mp3?v=1.5">
+<div class="title"><span class="num">6</span><div><h2>Océano chill</h2><p>Relajada y moderna; funciona bien para uso diario prolongado.</p></div></div>
+<button class="play" type="button">▶ Reproducir opción 6</button>
+<div class="time"><span class="current">0:00</span><input class="seek" type="range" min="0" max="100" value="0"><span class="duration">0:00</span></div>
+<button class="choose" type="button">Elegir opción 6</button>
+</section>
+<section class="card" data-src="assets/audio-extra/opcion-7-funk-de-ventas.mp3?v=1.5">
+<div class="title"><span class="num">7</span><div><h2>Funk de ventas</h2><p>Rítmica, juvenil y con sensación de movimiento comercial.</p></div></div>
+<button class="play" type="button">▶ Reproducir opción 7</button>
+<div class="time"><span class="current">0:00</span><input class="seek" type="range" min="0" max="100" value="0"><span class="duration">0:00</span></div>
+<button class="choose" type="button">Elegir opción 7</button>
+</section>
+<section class="card" data-src="assets/audio-extra/opcion-8-suspenso-de-mision.mp3?v=1.5">
+<div class="title"><span class="num">8</span><div><h2>Suspenso de misión</h2><p>Más intensa; funciona para retos especiales o semanales.</p></div></div>
+<button class="play" type="button">▶ Reproducir opción 8</button>
+<div class="time"><span class="current">0:00</span><input class="seek" type="range" min="0" max="100" value="0"><span class="duration">0:00</span></div>
+<button class="choose" type="button">Elegir opción 8</button>
+</section>
+<section class="card" data-src="assets/audio-extra/opcion-9-gran-campeon.mp3?v=1.5">
+<div class="title"><span class="num">9</span><div><h2>Gran campeón</h2><p>Heroica y triunfal, ideal para ranking y premiaciones.</p></div></div>
+<button class="play" type="button">▶ Reproducir opción 9</button>
+<div class="time"><span class="current">0:00</span><input class="seek" type="range" min="0" max="100" value="0"><span class="duration">0:00</span></div>
+<button class="choose" type="button">Elegir opción 9</button>
+</section>
+<div id="status" aria-live="polite">Toca una pista para escucharla.</div>
+<p class="note">Solo una pista puede sonar a la vez.</p>
+</main>
+<script>
+const cards=[...document.querySelectorAll('.card')];
+const players=[];
+function fmt(s){if(!Number.isFinite(s))return '0:00';return Math.floor(s/60)+':'+Math.floor(s%60).toString().padStart(2,'0')}
+cards.forEach(card=>{
+ const audio=new Audio(card.dataset.src); audio.preload='metadata'; audio.playsInline=true;
+ const play=card.querySelector('.play'),seek=card.querySelector('.seek'),cur=card.querySelector('.current'),dur=card.querySelector('.duration');
+ const obj={audio,play}; players.push(obj);
+ audio.addEventListener('loadedmetadata',()=>dur.textContent=fmt(audio.duration));
+ audio.addEventListener('timeupdate',()=>{cur.textContent=fmt(audio.currentTime);seek.value=audio.duration?(audio.currentTime/audio.duration)*100:0});
+ audio.addEventListener('ended',()=>{play.textContent='▶ Reproducir de nuevo';play.classList.remove('playing')});
+ play.addEventListener('click',async()=>{
+   players.forEach(o=>{if(o.audio!==audio){o.audio.pause();o.play.textContent='▶ Reproducir';o.play.classList.remove('playing')}});
+   try{if(audio.paused){await audio.play();play.textContent='⏸ Pausar';play.classList.add('playing');document.getElementById('status').textContent='Reproduciendo: '+card.querySelector('h2').textContent}else{audio.pause();play.textContent='▶ Continuar';play.classList.remove('playing')}}
+   catch(e){document.getElementById('status').textContent='No se pudo reproducir: '+e.message}
+ });
+ seek.addEventListener('input',()=>{if(audio.duration)audio.currentTime=Number(seek.value)/100*audio.duration});
+});
+document.querySelectorAll('.choose').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.choose').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');document.getElementById('status').textContent='Seleccionaste: '+b.closest('.card').querySelector('h2').textContent}));
+</script>
+</body>
+</html>

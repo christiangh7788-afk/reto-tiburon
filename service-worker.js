@@ -1,27 +1,22 @@
-const CACHE='reto-tiburon-v1-3';
+const CACHE='reto-tiburon-v1-5';
 const ASSETS=[
-  './',
-  './index.html',
-  './styles.css?v=1.3',
-  './app.js?v=1.3',
-  './manifest.webmanifest',
-  './assets/icon.svg',
-  './assets/tiburon.png?v=1.3',
-  './assets/audio/music-casual.wav',
-  './assets/audio/music-weekly.wav',
-  './assets/audio/click.wav',
-  './assets/audio/coin.wav',
-  './assets/audio/success.wav',
-  './assets/audio/error.wav',
-  './assets/audio/streak.wav',
-  './assets/audio/rank-up.wav'
+  './','./index.html','./styles.css?v=1.5','./app.js?v=1.5','./manifest.webmanifest',
+  './assets/icon.svg','./assets/tiburon.png?v=1.5','./assets/diseno-aprobado.png?v=1.5',
+  './assets/audio/music-casual.wav','./assets/audio/music-weekly.wav',
+  './assets/audio/click.wav','./assets/audio/coin.wav','./assets/audio/success.wav',
+  './assets/audio/error.wav','./assets/audio/streak.wav','./assets/audio/rank-up.wav',
+  './musica-extra.html?v=1.5',
+  './assets/audio-extra/opcion-4-fiesta-tropical.mp3',
+  './assets/audio-extra/opcion-5-arcade-brillante.mp3',
+  './assets/audio-extra/opcion-6-oceano-chill.mp3',
+  './assets/audio-extra/opcion-7-funk-de-ventas.mp3',
+  './assets/audio-extra/opcion-8-suspenso-de-mision.mp3',
+  './assets/audio-extra/opcion-9-gran-campeon.mp3'
 ];
-
 self.addEventListener('install',event=>{
   self.skipWaiting();
   event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS)));
 });
-
 self.addEventListener('activate',event=>{
   event.waitUntil(
     caches.keys()
@@ -29,7 +24,6 @@ self.addEventListener('activate',event=>{
       .then(()=>self.clients.claim())
   );
 });
-
 self.addEventListener('fetch',event=>{
   if(event.request.method!=='GET')return;
   event.respondWith(

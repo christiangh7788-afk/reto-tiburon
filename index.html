@@ -7,37 +7,64 @@
   <meta name="description" content="Reto Tiburón: misiones diarias de venta para sucursales.">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="styles.css?v=1.3">
+  <link rel="stylesheet" href="styles.css?v=1.5">
   <title>Reto Tiburón</title>
 </head>
 <body>
-  <div class="ocean-bg" aria-hidden="true">
-    <span class="bubble b1"></span><span class="bubble b2"></span><span class="bubble b3"></span>
-    <span class="bubble b4"></span><span class="bubble b5"></span><span class="bubble b6"></span>
-  </div>
-
   <main class="app-shell" id="appShell" hidden>
-    <header class="topbar">
-      <button class="icon-button" id="menuButton" type="button" aria-label="Abrir menú">☰</button>
-      <div class="brand">
-        <h1>Reto Tiburón<span class="cart">▰</span></h1>
-        <p>Misiones diarias de venta</p>
-      </div>
-      <button class="icon-button bell" id="notificationButton" type="button" aria-label="Ver avisos">
-        ●<span class="notification-count">3</span>
+    <section class="game-stage" aria-label="Tablero Reto Tiburón">
+      <button class="hotspot menu-hotspot" id="menuButton" type="button" aria-label="Abrir menú"></button>
+      <button class="hotspot notice-hotspot" id="notificationButton" type="button" aria-label="Ver avisos"></button>
+
+      <div class="dynamic-stat day-stat" id="dayStat">7/30</div>
+      <div class="dynamic-stat coins-stat" id="coinsStat">1,250</div>
+      <div class="dynamic-stat streak-stat" id="streakStat">6 días</div>
+
+      <article class="mission-overlay">
+        <p class="mission-kicker" id="missionKicker">Día 7 · Reto semanal</p>
+        <h2 id="missionTitle">Venta semanal de cerveza &gt; $10,000</h2>
+        <div class="reward-box">
+          <div class="netocoin">n</div>
+          <div><strong id="rewardValue">+300</strong><span>netopesos</span></div>
+        </div>
+        <div class="goal-pill" id="goalValue">Meta: $10,000 MXN</div>
+      </article>
+
+      <section class="progress-overlay">
+        <div class="progress-heading"><h3>AVANCE DEL MES</h3><strong id="progressPercent">63%</strong></div>
+        <div class="progress-track"><div class="progress-fill" id="progressFill"></div><span class="fin" id="fin"></span></div>
+        <div class="progress-labels"><strong id="salesValue">$18,900</strong><span>Meta del mes: $30,000</span></div>
+      </section>
+
+      <button class="next-overlay" id="nextMissionButton" type="button">
+        <div class="target-icon">◎<span>⚑</span></div>
+        <div class="next-copy"><small>PRÓXIMO RETO</small><strong id="nextTitle">Alcanza 150% en pagos de servicios</strong><span id="nextGoal">Meta: 150%</span></div>
+        <div class="next-reward"><small>Recompensa</small><strong id="nextReward">150</strong><span>netopesos</span></div>
+        <span class="next-arrow">›</span>
       </button>
-    </header>
+
+      <section class="ranking-overlay">
+        <div class="ranking-head"><h3>🏆 RANKING DE TIENDAS</h3><button id="rankingToggle" type="button">Ver ranking completo ›</button></div>
+        <div id="rankingList"></div>
+      </section>
+
+      <nav class="category-hotspots" aria-label="Categorías de retos">
+        <button data-category="Recargas" type="button" aria-label="Recargas"></button>
+        <button data-category="Producto adoptado" type="button" aria-label="Producto adoptado"></button>
+        <button data-category="Cerveza" type="button" aria-label="Cerveza"></button>
+        <button data-category="Cañonetos" type="button" aria-label="Cañonetos"></button>
+      </nav>
+
+      <button class="cta-overlay" id="validateButton" type="button"><span>✓</span><b>VALIDAR MISIÓN</b></button>
+      <button class="audio-unlock" id="audioUnlockBanner" type="button" hidden>🔊 Toca para activar música y sonidos</button>
+      <p class="status-message" id="statusMessage" aria-live="polite"></p>
+    </section>
 
     <aside class="drawer" id="drawer" aria-hidden="true">
-      <div class="drawer-head">
-        <div>
-          <strong id="drawerStore">Mi tienda</strong>
-          <small id="drawerCode">Sucursal</small>
-        </div>
-        <button class="close-button" id="closeDrawer" type="button" aria-label="Cerrar">×</button>
-      </div>
+      <div class="drawer-head"><div><strong id="drawerStore">Mi tienda</strong><small id="drawerCode">Sucursal</small></div><button class="close-button" id="closeDrawer" type="button" aria-label="Cerrar">×</button></div>
       <button class="drawer-option" id="calendarButton" type="button">Calendario de 30 misiones</button>
       <button class="drawer-option" id="profileButton" type="button">Perfil de la sucursal</button>
+      <button class="drawer-option" id="musicTestButton" type="button">Probar músicas de fondo</button>
       <button class="drawer-option" id="installButton" type="button" hidden>Instalar en el celular</button>
       <section class="audio-settings" aria-label="Configuración de audio">
         <strong>Audio del juego</strong>
@@ -50,140 +77,35 @@
       <button class="drawer-option" id="logoutButton" type="button">Cambiar de tienda</button>
     </aside>
 
-    <section class="notification-panel" id="notificationPanel" hidden>
-      <strong>Avisos</strong>
-      <p>Tu misión del día ya está disponible.</p>
-      <p>La racha agrega hasta 100 netopesos extra.</p>
-      <p>El ranking se actualiza después de validar.</p>
-    </section>
-
-    <button class="audio-unlock" id="audioUnlockBanner" type="button" hidden>🔊 Toca para activar música y sonidos</button>
-
-    <section class="stats" aria-label="Resumen del reto">
-      <article class="stat-card">
-        <div class="stat-icon blue">▦</div>
-        <div><small>Día</small><strong id="dayStat">7/30</strong></div>
-      </article>
-      <article class="stat-card">
-        <div class="stat-icon orange">$</div>
-        <div><small>Netopesos</small><strong class="orange-text" id="coinsStat">1,250</strong></div>
-      </article>
-      <article class="stat-card">
-        <div class="stat-icon orange">🔥</div>
-        <div><small>Racha</small><strong class="orange-text" id="streakStat">6 días</strong></div>
-      </article>
-    </section>
-
-    <section class="hero">
-      <article class="mission-card">
-        <div class="mission-ribbon">★ MISIÓN DEL DÍA ★</div>
-        <p class="mission-kicker" id="missionKicker">Día 7 · Reto semanal</p>
-        <h2 id="missionTitle">Venta semanal de cerveza &gt; $10,000</h2>
-        <div class="reward-box">
-          <div class="netocoin">n</div>
-          <div><strong id="rewardValue">+300</strong><span>netopesos</span></div>
-        </div>
-        <div class="goal-pill" id="goalValue">Meta: $10,000 MXN</div>
-      </article>
-      <img class="mascot" src="assets/tiburon.png?v=1.3" alt="Tiburón neto señalando la misión del día">
-    </section>
-
-    <section class="white-card progress-card">
-      <div class="section-title-row">
-        <h3>AVANCE DEL MES</h3>
-        <strong id="progressPercent">63%</strong>
-      </div>
-      <div class="progress-track" aria-label="Avance mensual">
-        <div class="progress-fill" id="progressFill"></div>
-        <span class="fin" id="fin" aria-hidden="true"></span>
-      </div>
-      <div class="progress-labels"><strong id="salesValue">$18,900</strong><span>Meta del mes: $30,000</span></div>
-    </section>
-
-    <button class="next-card" id="nextMissionButton" type="button">
-      <div class="target-icon">◎<span>⚑</span></div>
-      <div class="next-copy">
-        <small>PRÓXIMO RETO</small>
-        <strong id="nextTitle">Alcanza 150% en pagos de servicios</strong>
-        <span id="nextGoal">Meta: 150%</span>
-      </div>
-      <div class="next-reward"><small>Recompensa</small><strong id="nextReward">150</strong><span>netopesos</span></div>
-    </button>
-
-    <section class="ranking-card">
-      <div class="ranking-head">
-        <h3>🏆 RANKING DE TIENDAS</h3>
-        <button id="rankingToggle" type="button">Ver ranking completo ›</button>
-      </div>
-      <div id="rankingList"></div>
-    </section>
-
-    <nav class="category-grid" aria-label="Categorías de retos">
-      <button class="category blue-chip" data-category="Recargas" type="button">▣ Recargas</button>
-      <button class="category green-chip" data-category="Producto adoptado" type="button">★ Producto adoptado</button>
-      <button class="category gold-chip" data-category="Cerveza" type="button">▥ Cerveza</button>
-      <button class="category purple-chip" data-category="Cañonetos" type="button">▤ Cañonetos</button>
-    </nav>
-
-    <p class="status-message" id="statusMessage" aria-live="polite">Cumple la misión del día para sumar netopesos y mantener tu racha.</p>
-
-    <button class="primary-cta" id="validateButton" type="button"><span>✓</span> VALIDAR MISIÓN</button>
+    <section class="notification-panel" id="notificationPanel" hidden><strong>Avisos</strong><p>Tu misión del día ya está disponible.</p><p>La racha agrega hasta 100 netopesos extra.</p><p>El ranking se actualiza después de validar.</p></section>
   </main>
 
   <section class="login-screen" id="loginScreen">
     <div class="login-card">
-      <img src="assets/tiburon.png?v=1.3" alt="Mascota Reto Tiburón">
+      <img src="assets/tiburon.png?v=1.5" alt="Mascota Reto Tiburón">
       <p class="login-eyebrow">RETO TIBURÓN</p>
       <h2>Entra con tu sucursal</h2>
       <label>Nombre de tienda<input id="storeNameInput" maxlength="45" value="Tienda Demo" autocomplete="organization"></label>
       <label>Número de sucursal<input id="storeCodeInput" maxlength="15" value="001" inputmode="numeric"></label>
-      <div class="login-actions">
-        <button id="newGameButton" type="button">Comenzar reto nuevo</button>
-        <button id="demoButton" class="demo" type="button">Entrar en modo demostración</button>
-      </div>
-      <small>La versión 1.3 guarda el avance y tus preferencias de audio en este dispositivo.</small>
+      <div class="login-actions"><button id="newGameButton" type="button">Comenzar reto nuevo</button><button id="demoButton" class="demo" type="button">Entrar en modo demostración</button></div>
+      <small>La versión 1.5 conserva el diseño aprobado y guarda el progreso y el audio en este dispositivo.</small>
     </div>
   </section>
 
   <dialog class="modal" id="validationDialog">
     <form method="dialog" class="modal-card" id="validationForm">
       <button class="modal-close" value="cancel" aria-label="Cerrar">×</button>
-      <p class="modal-eyebrow">VALIDAR RESULTADO</p>
-      <h2 id="validationTitle">Misión del día</h2>
-      <p id="validationHelp">Captura el resultado alcanzado.</p>
+      <p class="modal-eyebrow">VALIDAR RESULTADO</p><h2 id="validationTitle">Misión del día</h2><p id="validationHelp">Captura el resultado alcanzado.</p>
       <label>Resultado de la sucursal<div class="input-with-unit"><input id="resultInput" type="number" min="0" step="1" required><span id="resultUnit">%</span></div></label>
       <label class="evidence-label">Folio o evidencia opcional<input id="evidenceInput" maxlength="80" placeholder="Ej. ticket, reporte o fotografía"></label>
-      <div class="modal-actions">
-        <button value="cancel" class="secondary" type="button" id="cancelValidation">Cancelar</button>
-        <button class="confirm" type="submit">Comprobar misión</button>
-      </div>
+      <div class="modal-actions"><button value="cancel" class="secondary" type="button" id="cancelValidation">Cancelar</button><button class="confirm" type="submit" id="confirmValidation">Comprobar misión</button></div>
     </form>
   </dialog>
 
-  <dialog class="modal large" id="calendarDialog">
-    <section class="modal-card">
-      <button class="modal-close" id="closeCalendar" type="button" aria-label="Cerrar">×</button>
-      <p class="modal-eyebrow">CALENDARIO MENSUAL</p>
-      <h2>Las 30 misiones</h2>
-      <div class="mission-calendar" id="missionCalendar"></div>
-    </section>
-  </dialog>
-
-  <dialog class="modal" id="profileDialog">
-    <section class="modal-card">
-      <button class="modal-close" id="closeProfile" type="button" aria-label="Cerrar">×</button>
-      <p class="modal-eyebrow">MI SUCURSAL</p>
-      <h2 id="profileStore">Tienda Demo</h2>
-      <div class="profile-metrics">
-        <div><small>Clave</small><strong id="profileCode">001</strong></div>
-        <div><small>Misiones</small><strong id="profileMissions">6</strong></div>
-        <div><small>Netopesos</small><strong id="profileCoins">1,250</strong></div>
-      </div>
-      <p>Los datos de esta V1 se almacenan localmente en el celular. El ranking nacional compartido requiere conectar el backend.</p>
-    </section>
-  </dialog>
+  <dialog class="modal large" id="calendarDialog"><section class="modal-card"><button class="modal-close" id="closeCalendar" type="button" aria-label="Cerrar">×</button><p class="modal-eyebrow">CALENDARIO MENSUAL</p><h2>Las 30 misiones</h2><div class="mission-calendar" id="missionCalendar"></div></section></dialog>
+  <dialog class="modal" id="profileDialog"><section class="modal-card"><button class="modal-close" id="closeProfile" type="button" aria-label="Cerrar">×</button><p class="modal-eyebrow">MI SUCURSAL</p><h2 id="profileStore">Tienda Demo</h2><div class="profile-metrics"><div><small>Clave</small><strong id="profileCode">001</strong></div><div><small>Misiones</small><strong id="profileMissions">6</strong></div><div><small>Netopesos</small><strong id="profileCoins">1,250</strong></div></div><p>Los datos de esta V1 se almacenan localmente en el celular. El ranking nacional compartido requiere conectar el backend.</p></section></dialog>
 
   <audio id="backgroundMusic" preload="auto" loop src="assets/audio/music-casual.wav"></audio>
-  <script src="app.js?v=1.3"></script>
+  <script src="app.js?v=1.5"></script>
 </body>
 </html>
