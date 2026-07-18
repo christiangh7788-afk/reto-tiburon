@@ -33,3 +33,7 @@ Después abre `http://localhost:8080`.
 ## Alcance de esta V1
 
 El avance se guarda localmente. Para que todas las sucursales compartan un ranking real hace falta una fase de backend con usuarios, base de datos, permisos y conexión a ventas reales.
+
+
+## Corrección V1.1
+Se corrigió la pantalla de acceso que permanecía visible después de pulsar los botones y se actualizó la caché de la PWA.
