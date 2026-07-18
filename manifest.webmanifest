@@ -1,11 +1,18 @@
 {
-  "name":"Reto Tiburón",
-  "short_name":"Reto Tiburón",
-  "description":"Misiones diarias de venta para sucursales con música y efectos.",
-  "start_url":"./index.html",
-  "display":"standalone",
-  "background_color":"#021845",
-  "theme_color":"#052b78",
-  "lang":"es-MX",
-  "icons":[{"src":"assets/icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
+  "name": "Reto Tiburón",
+  "short_name": "Reto Tiburón",
+  "description": "Misiones diarias de venta con rangos de tripulación, celebraciones, música Funk de ventas y efectos.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#021845",
+  "theme_color": "#052b78",
+  "lang": "es-MX",
+  "icons": [
+    {
+      "src": "assets/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
 }

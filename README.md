@@ -1,29 +1,29 @@
-# Reto Tiburón V1.5 — paquete completo para GitHub Pages
+# Reto Tiburón V1.9 — rangos y celebraciones
 
-Este paquete incluye:
+Esta versión agrega una pantalla de celebración después de cada misión, ascensos de rango y conserva **netocoins** con n minúscula.
 
-- La aplicación funcional Reto Tiburón.
-- Diseño aprobado, tiburón, misiones, ranking, netopesos y guardado local.
-- Música y efectos actuales de la app.
-- Una página para comparar seis músicas adicionales.
+## Rangos
 
-## Subir a GitHub
+- Misiones 1–5: **Aprendiz Tiburón**
+- Misiones 6–10: **Marinero Tiburón**
+- Misiones 11–20: **Oficial Tiburón**
+- Misiones 21–29: **Comandante Tiburón**
+- Al completar la misión 30: **Capitán Tiburón #1**
+
+La pantalla de misión cumplida incluye confeti, estrella, tiburón, netocoins obtenidos, rango actual y un aviso especial cuando hay ascenso.
+
+## Publicar en GitHub Pages
 
 1. Descomprime el ZIP.
-2. Entra a tu repositorio `reto-tiburon`.
-3. Reemplaza todos los archivos actuales por todo el contenido de esta carpeta.
-4. Conserva exactamente las carpetas `assets/audio` y `assets/audio-extra`.
-5. Pulsa **Commit changes**.
-6. Espera de 1 a 3 minutos.
-7. Abre:
+2. Reemplaza todo el contenido del repositorio `reto-tiburon`.
+3. Confirma con **Commit changes**.
+4. Espera de 1 a 3 minutos.
+5. Abre:
 
-   `https://christiangh7788-afk.github.io/reto-tiburon/?v=15`
+`https://christiangh7788-afk.github.io/reto-tiburon/?v=19`
 
-## Probar las músicas
+Si aparece una versión anterior, borra los datos del sitio o abre en una pestaña privada.
 
-Dentro de la app abre el menú y pulsa **Probar músicas de fondo**.
-También puedes abrir directamente:
+## Música
 
-`https://christiangh7788-afk.github.io/reto-tiburon/musica-extra.html?v=15`
-
-Las seis pistas extra son de comparación; todavía no reemplazan automáticamente la música principal.
+Pista principal: **Opción 7 — Funk de ventas**.
