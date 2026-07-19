@@ -30,6 +30,7 @@ class Match3Game{
     document.getElementById('match3ResultContinue').addEventListener('click',()=>this.finishAndClose());
     document.getElementById('match3Retry').addEventListener('click',()=>this.start({level:this.level,onFinish:this.onFinish,retry:true}));
     document.getElementById('match3Exit').addEventListener('click',()=>this.close());
+    document.getElementById('match3LoseExit').addEventListener('click',()=>this.close());
     document.querySelector('.match3-sound').addEventListener('click',e=>{const on=window.RetoTiburon?.toggleMusic?.();e.currentTarget.textContent=on?'🎵':'🔇'});
     this.dialog.addEventListener('close',()=>window.RetoTiburon?.setMatch3Active?.(false));
     this.boardEl.addEventListener('click',e=>{const gem=e.target.closest('.match3-gem');if(gem)this.select(Number(gem.dataset.index))});
@@ -44,7 +45,8 @@ class Match3Game{
     this.objectives=this.makeObjectives();
     this.board=this.makePlayableBoard();
     this.resultEl.hidden=true;
-    this.resultEl.querySelector('.match3-result-card').classList.remove('lose');
+    document.getElementById('match3SuccessCard').hidden=false;
+    document.getElementById('match3LoseCard').hidden=true;
     document.getElementById('match3Level').textContent=`BONO ${this.level}`;
     document.getElementById('match3Rank').textContent=window.RetoTiburon?.getRank?.()||'Aprendiz Tiburón';
     this.setMessage('Alinea 3 o más fichas. Toca dos fichas vecinas o desliza.');
@@ -228,11 +230,27 @@ class Match3Game{
     this.render();await sleep(260);
   }
   win(){
-    this.busy=true;const reward=this.calculateReward();const result=window.RetoTiburon?.addBonusCoins?.({level:this.level,reward,movesLeft:this.moves,score:this.score})||{reward,rank:'Aprendiz Tiburón'};
-    document.getElementById('match3ResultTitle').textContent='¡Reto superado!';document.getElementById('match3ResultText').textContent=`Objetivos completos con ${this.moves} movimientos restantes.`;document.getElementById('match3ResultReward').textContent=`+${result.reward??reward}`;document.getElementById('match3ResultRank').textContent=result.rank||'';document.getElementById('match3ResultRewardBox').hidden=false;document.getElementById('match3ResultContinue').hidden=false;document.getElementById('match3Retry').hidden=true;this.resultEl.querySelector('.match3-result-card').classList.remove('lose');this.resultEl.hidden=false;window.RetoTiburon?.playSfx?.('success');this.onFinish?.({won:true,reward:result.reward??reward,level:this.level});
+    this.busy=true;
+    const reward=this.calculateReward();
+    const result=window.RetoTiburon?.addBonusCoins?.({level:this.level,reward,movesLeft:this.moves,score:this.score})||{reward,rank:'Aprendiz Tiburón'};
+    document.getElementById('match3SuccessCard').hidden=false;
+    document.getElementById('match3LoseCard').hidden=true;
+    document.getElementById('match3ResultText').textContent=`Objetivos completos con ${this.moves} movimientos`;
+    document.getElementById('match3ResultReward').textContent=`+${result.reward??reward}`;
+    document.getElementById('match3ResultRank').textContent=result.rank||'';
+    this.resultEl.hidden=false;
+    window.RetoTiburon?.playSfx?.('success');
+    this.onFinish?.({won:true,reward:result.reward??reward,level:this.level});
   }
   lose(){
-    this.busy=true;document.getElementById('match3ResultTitle').textContent='Sin movimientos';document.getElementById('match3ResultText').textContent='Estuviste cerca. Puedes volver a intentarlo sin perder tu misión diaria.';document.getElementById('match3ResultRewardBox').hidden=true;document.getElementById('match3ResultContinue').hidden=true;document.getElementById('match3Retry').hidden=false;document.getElementById('match3ResultRank').textContent='';this.resultEl.querySelector('.match3-result-card').classList.add('lose');this.resultEl.hidden=false;window.RetoTiburon?.playSfx?.('error');this.onFinish?.({won:false,level:this.level});
+    this.busy=true;
+    document.getElementById('match3SuccessCard').hidden=true;
+    document.getElementById('match3LoseCard').hidden=false;
+    document.getElementById('match3LoseTitle').textContent='Sin movimientos';
+    document.getElementById('match3LoseText').textContent='Estuviste cerca. Puedes volver a intentarlo sin perder tu misión diaria.';
+    this.resultEl.hidden=false;
+    window.RetoTiburon?.playSfx?.('error');
+    this.onFinish?.({won:false,level:this.level});
   }
 }
 

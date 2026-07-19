@@ -6,8 +6,8 @@
   <meta name="theme-color" content="#03194f">
   <title>Reto Tiburón</title>
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="stylesheet" href="styles.css?v=3.0">
-  <link rel="stylesheet" href="match3.css?v=3.0">
+  <link rel="stylesheet" href="styles.css?v=3.1">
+  <link rel="stylesheet" href="match3.css?v=3.1">
 </head>
 <body>
   <section id="loginScreen" class="login-screen">
@@ -127,14 +127,29 @@
       <div class="match3-legend"><span>4 = 🚀 cohete</span><span>5 = 🌈 bola</span><span>L/T = 💣 bomba</span></div>
       <div class="match3-score-line">Puntuación: <strong id="match3Score">0</strong></div>
       <section class="match3-result" id="match3Result" hidden>
-        <div class="match3-result-card">
-          <div class="match3-result-star">★</div>
-          <h2 id="match3ResultTitle">¡Reto superado!</h2>
-          <p id="match3ResultText">Objetivos completos.</p>
-          <img class="match3-result-shark" src="assets/tiburon.png" alt="Tiburón celebrando">
-          <div class="match3-result-reward" id="match3ResultRewardBox"><small>Ganaste</small><strong id="match3ResultReward">+120</strong><b>netocoins</b></div>
-          <p id="match3ResultRank">Aprendiz Tiburón</p>
-          <div class="match3-result-actions"><button class="match3-primary" id="match3ResultContinue">Continuar</button><button class="match3-primary" id="match3Retry" hidden>Volver a intentar</button><button class="match3-secondary" id="match3Exit">Salir</button></div>
+        <div class="match3-success-card" id="match3SuccessCard">
+          <div class="match3-success-star">★</div>
+          <div class="match3-confetti c1"></div><div class="match3-confetti c2"></div><div class="match3-confetti c3"></div><div class="match3-confetti c4"></div>
+          <h2>¡Reto superado!</h2>
+          <p id="match3ResultText" class="match3-success-objectives">Objetivos completos con 10 movimientos</p>
+          <div class="match3-coin coin-a">n.</div><div class="match3-coin coin-b">n.</div><div class="match3-coin coin-c">n.</div>
+          <div class="match3-success-reward" id="match3ResultRewardBox">
+            <strong id="match3ResultReward">+102</strong>
+            <b>netocoins</b>
+          </div>
+          <img class="match3-success-shark" src="assets/match3-shark-clean.png" alt="Tiburón celebrando">
+          <p id="match3ResultRank" class="match3-success-rank">Aprendiz Tiburón</p>
+          <button id="match3ResultContinue" class="match3-success-button continue" type="button">CONTINUAR</button>
+          <button id="match3Exit" class="match3-success-button exit" type="button">SALIR</button>
+        </div>
+        <div class="match3-lose-card" id="match3LoseCard" hidden>
+          <div class="match3-result-star">✦</div>
+          <h2 id="match3LoseTitle">Sin movimientos</h2>
+          <p id="match3LoseText">Estuviste cerca. Puedes volver a intentarlo sin perder tu misión diaria.</p>
+          <div class="match3-result-actions">
+            <button class="match3-primary" id="match3Retry" type="button">Volver a intentar</button>
+            <button class="match3-secondary" id="match3LoseExit" type="button">Salir</button>
+          </div>
         </div>
       </section>
     </section>
@@ -142,7 +157,7 @@
 
   <div id="toast" class="toast" aria-live="polite"></div>
   <audio id="backgroundMusic" preload="auto" loop src="assets/audio/music-funk-de-ventas.mp3"></audio>
-  <script src="app.js?v=3.0"></script>
-  <script src="match3.js?v=3.0"></script>
+  <script src="app.js?v=3.1"></script>
+  <script src="match3.js?v=3.1"></script>
 </body>
 </html>
