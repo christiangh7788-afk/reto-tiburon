@@ -1,29 +1,31 @@
-# Reto Tiburón V1.9 — rangos y celebraciones
+# Reto Tiburón V2.0
 
-Esta versión agrega una pantalla de celebración después de cada misión, ascensos de rango y conserva **netocoins** con n minúscula.
+Versión completa para GitHub Pages con:
 
-## Rangos
+- 30 misiones diarias de venta.
+- netocoins, rachas, ranking y rangos de tripulación.
+- Música principal **Funk de ventas** y efectos.
+- Celebración después de validar cada misión.
+- Minijuego Match-3 de bonificación con tablero 9 × 9.
+- Intercambio por toque o deslizamiento.
+- Cascadas, cohetes, bombas y bolas de color.
+- Objetivos y movimientos limitados.
+- Bono adicional de netocoins al ganar.
+- Progreso guardado en el dispositivo.
+- Compatible con GitHub Pages y funcionamiento sin conexión.
 
-- Misiones 1–5: **Aprendiz Tiburón**
-- Misiones 6–10: **Marinero Tiburón**
-- Misiones 11–20: **Oficial Tiburón**
-- Misiones 21–29: **Comandante Tiburón**
-- Al completar la misión 30: **Capitán Tiburón #1**
-
-La pantalla de misión cumplida incluye confeti, estrella, tiburón, netocoins obtenidos, rango actual y un aviso especial cuando hay ascenso.
-
-## Publicar en GitHub Pages
+## Publicación
 
 1. Descomprime el ZIP.
-2. Reemplaza todo el contenido del repositorio `reto-tiburon`.
-3. Confirma con **Commit changes**.
-4. Espera de 1 a 3 minutos.
-5. Abre:
+2. Sube **todo el contenido** a la raíz del repositorio `reto-tiburon`.
+3. Confirma que `index.html`, `app.js`, `match3.js`, `styles.css` y `match3.css` estén en la raíz.
+4. Sube la carpeta `assets` completa.
+5. Haz **Commit changes**.
+6. Espera de 1 a 3 minutos.
+7. Abre:
 
-`https://christiangh7788-afk.github.io/reto-tiburon/?v=19`
+`https://christiangh7788-afk.github.io/reto-tiburon/?v=20`
 
-Si aparece una versión anterior, borra los datos del sitio o abre en una pestaña privada.
+## Uso del Match-3
 
-## Música
-
-Pista principal: **Opción 7 — Funk de ventas**.
+Después de cumplir una misión aparece **Jugar reto de bonificación**. También puede abrirse posteriormente desde el menú mientras exista un bono pendiente.

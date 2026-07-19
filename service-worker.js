@@ -1,10 +1,10 @@
-const CACHE='reto-tiburon-v1-9';
+const CACHE='reto-tiburon-v2-0';
 const ASSETS=[
-  './','./index.html','./styles.css?v=1.9','./app.js?v=1.9','./manifest.webmanifest',
-  './assets/icon.svg','./assets/tiburon.png?v=1.9','./assets/diseno-aprobado.png?v=1.9',
+  './','./index.html','./styles.css?v=2.0','./match3.css?v=2.0','./match3.js?v=2.0','./app.js?v=2.0','./manifest.webmanifest',
+  './assets/icon.svg','./assets/tiburon.png?v=2.0','./assets/diseno-aprobado.png?v=2.0',
   './assets/audio/music-funk-de-ventas.mp3','./assets/audio/click.wav','./assets/audio/coin.wav','./assets/audio/success.wav',
   './assets/audio/error.wav','./assets/audio/streak.wav','./assets/audio/rank-up.wav',
-  './musica-extra.html?v=1.9',
+  './musica-extra.html?v=2.0',
   './assets/audio-extra/opcion-4-fiesta-tropical.mp3','./assets/audio-extra/opcion-5-arcade-brillante.mp3','./assets/audio-extra/opcion-6-oceano-chill.mp3','./assets/audio-extra/opcion-7-funk-de-ventas.mp3','./assets/audio-extra/opcion-8-suspenso-de-mision.mp3','./assets/audio-extra/opcion-9-gran-campeon.mp3'
 ];
 self.addEventListener('install',event=>{self.skipWaiting();event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS)))});

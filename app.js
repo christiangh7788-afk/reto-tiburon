@@ -40,7 +40,7 @@ const AUDIO_TRACKS={casual:'assets/audio/music-funk-de-ventas.mp3',weekly:'asset
 const SFX_PATHS={click:'assets/audio/click.wav',coin:'assets/audio/coin.wav',success:'assets/audio/success.wav',error:'assets/audio/error.wav',streak:'assets/audio/streak.wav',rank:'assets/audio/rank-up.wav'};
 const $=id=>document.getElementById(id);
 const format=n=>Number(n).toLocaleString('es-MX');
-const state={storeName:'',storeCode:'',day:0,coins:0,streak:0,sales:0,completed:Array(30).fill(false),evidence:{},demo:false};
+const state={storeName:'',storeCode:'',day:0,coins:0,streak:0,sales:0,completed:Array(30).fill(false),evidence:{},bonusPlayed:{},demo:false};
 const audioPrefs={music:true,sfx:true,musicVolume:.35,sfxVolume:.75};
 const RANKS=[
   {min:0,max:5,name:'Aprendiz Tiburón',icon:'⚓'},
@@ -52,12 +52,12 @@ const RANKS=[
 function missionCount(){return state.completed.filter(Boolean).length}
 function sharkRank(count=missionCount()){return RANKS.find(rank=>count>=rank.min&&count<=rank.max)||RANKS[0]}
 
-const sfxBank={}; let deferredInstallPrompt=null; let audioUnlocked=false; let toastTimer=null;
+const sfxBank={}; let deferredInstallPrompt=null; let audioUnlocked=false; let toastTimer=null; let pendingBonusLevel=null; let musicVolumeBeforeMatch3=null;
 function targetText(m){return m.unit==='MXN'?`$${format(m.target)} MXN`:`${format(m.target)} ${m.unit}`}
 function titleClass(text){return text.length>44?'vlong':text.length>30?'long':''}
 function showStatus(message){const el=$('statusMessage');if(!el)return;el.textContent=message;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),3200)}
 function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}
-function load(){const raw=localStorage.getItem(STORAGE_KEY);if(!raw)return false;try{Object.assign(state,JSON.parse(raw));if(!Array.isArray(state.completed)||state.completed.length!==30)state.completed=Array(30).fill(false);return Boolean(state.storeName)}catch{return false}}
+function load(){const raw=localStorage.getItem(STORAGE_KEY);if(!raw)return false;try{Object.assign(state,JSON.parse(raw));if(!Array.isArray(state.completed)||state.completed.length!==30)state.completed=Array(30).fill(false);if(!state.evidence||typeof state.evidence!=='object')state.evidence={};if(!state.bonusPlayed||typeof state.bonusPlayed!=='object')state.bonusPlayed={};return Boolean(state.storeName)}catch{return false}}
 function loadAudioPrefs(){try{const raw=localStorage.getItem(AUDIO_PREFS_KEY);if(raw)Object.assign(audioPrefs,JSON.parse(raw))}catch{};audioPrefs.musicVolume=Math.max(0,Math.min(1,Number(audioPrefs.musicVolume)||0));audioPrefs.sfxVolume=Math.max(0,Math.min(1,Number(audioPrefs.sfxVolume)||0));Object.entries(SFX_PATHS).forEach(([name,path])=>{const a=new Audio(path);a.preload='auto';sfxBank[name]=a});updateAudioUI()}
 function saveAudioPrefs(){localStorage.setItem(AUDIO_PREFS_KEY,JSON.stringify(audioPrefs))}
 function desiredMusicKey(){const category=MISSIONS[state.day]?.category||'';return category==='Reto semanal'||category==='Gran final'?'weekly':'casual'}
@@ -69,7 +69,7 @@ function playSfx(name,delay=0){if(!audioUnlocked||!audioPrefs.sfx||!sfxBank[name
 function setMusicEnabled(enabled){audioPrefs.music=enabled;saveAudioPrefs();if(enabled){unlockAudio()}else{pauseMusic()}updateAudioUI()}
 function setEffectsEnabled(enabled){audioPrefs.sfx=enabled;saveAudioPrefs();updateAudioUI()}
 function currentRank(points){const all=[...COMPETITORS.map(i=>({...i})),{name:state.storeName||'Mi tienda',points,me:true}].sort((a,b)=>b.points-a.points);return all.findIndex(i=>i.me)+1}
-function initialState(demo){state.demo=demo;state.storeName=$('storeNameInput').value.trim()||'Tienda Demo';state.storeCode=$('storeCodeInput').value.trim()||'001';state.evidence={};if(demo){state.day=6;state.coins=1250;state.streak=6;state.sales=18900;state.completed=Array.from({length:30},(_,i)=>i<6)}else{state.day=0;state.coins=0;state.streak=0;state.sales=0;state.completed=Array(30).fill(false)}save();enterApp();unlockAudio()}
+function initialState(demo){state.demo=demo;state.storeName=$('storeNameInput').value.trim()||'Tienda Demo';state.storeCode=$('storeCodeInput').value.trim()||'001';state.evidence={};state.bonusPlayed={};if(demo){state.day=6;state.coins=1250;state.streak=6;state.sales=18900;state.completed=Array.from({length:30},(_,i)=>i<6)}else{state.day=0;state.coins=0;state.streak=0;state.sales=0;state.completed=Array(30).fill(false)}save();enterApp();unlockAudio()}
 function enterApp(){$('loginScreen').hidden=true;$('loginScreen').style.display='none';$('appShell').hidden=false;$('appShell').style.display='block';$('drawerStore').textContent=state.storeName;$('drawerCode').textContent=`Sucursal ${state.storeCode}`;render();updateAudioUI()}
 function openDrawer(open){$('drawer').classList.toggle('open',open);$('drawer').setAttribute('aria-hidden',String(!open))}
 function rankingData(){return [...COMPETITORS,{name:state.storeName||'Mi tienda',points:state.coins,me:true}].sort((a,b)=>b.points-a.points)}
@@ -82,9 +82,13 @@ $('progressPercent').textContent=`${pct}%`; $('progressFill').style.width=`${pct
 const nt=$('nextTitle'); nt.textContent=state.day===29?'Premiación mensual':next.title; nt.className=''; const nc=titleClass(nt.textContent); if(nc) nt.classList.add(nc); $('nextGoal').textContent=state.day===29?'Ranking final de tiendas':`Meta: ${targetText(next)}`; $('nextReward').textContent=state.day===29?'🏆':next.reward;
 const completed=state.completed[state.day]; $('ctaLabel').textContent=completed?'MISIÓN CUMPLIDA':'VALIDAR MISIÓN'; $('ctaLabel').classList.toggle('completed',completed); $('validateButton').disabled=completed;
 $('profileStore').textContent=state.storeName; $('profileCode').textContent=state.storeCode; $('profileMissions').textContent=missionCount(); $('profileCoins').textContent=format(state.coins); $('profileRank').textContent=sharkRank().name;
+const bonusButton=$('bonusGameDrawerButton');if(bonusButton){const pending=findPendingBonus();bonusButton.hidden=pending<0;bonusButton.textContent=pending>=0?`🎮 Jugar Match-3 pendiente · Nivel ${pending+1}`:'🎮 Sin bonos pendientes'}
 renderRanking(); syncMusicForMission()}
 function openValidation(){const m=MISSIONS[state.day];$('validationTitle').textContent=m.title;$('validationHelp').textContent=`Meta del día: ${targetText(m)}.`;$('resultUnit').textContent=m.unit;$('resultInput').value='';$('evidenceInput').value='';$('validationDialog').showModal();setTimeout(()=>$('resultInput').focus(),100)}
-function showCompletion({level,earned,oldRank,newRank,finalMission}){
+function findPendingBonus(){for(let i=state.completed.length-1;i>=0;i--){if(state.completed[i]&&!state.bonusPlayed?.[i])return i}return -1}
+function launchBonus(levelIndex){const index=Number.isInteger(levelIndex)?levelIndex:findPendingBonus();if(index<0){showStatus('No hay retos Match-3 pendientes.');return}pendingBonusLevel=index;if($('completionDialog').open)$('completionDialog').close();window.RetoMatch3?.start({level:index+1,onFinish:()=>render()})}
+function showCompletion({level,earned,oldRank,newRank,finalMission,completedDay}){
+  pendingBonusLevel=Number.isInteger(completedDay)?completedDay:level-1;
   $('completionLevel').textContent=`NIVEL ${level}`;
   $('completionReward').textContent=`+${earned}`;
   $('completionRank').textContent=newRank.name;
@@ -95,12 +99,14 @@ function showCompletion({level,earned,oldRank,newRank,finalMission}){
   if(finalMission){
     $('completionHeading').textContent='¡Misión mensual completada!';
     $('completionMessage').textContent='Has conquistado las 30 misiones. Ya eres el Capitán Tiburón #1.';
-    $('continueCompletion').textContent='Ver resultado final';
+    $('continueCompletion').textContent='🎮 Jugar reto de bonificación';
+    $('skipBonus').textContent='Ver resultado final';
     $('completionDialog').classList.add('final-level');
   }else{
     $('completionHeading').textContent='¡Bien hecho!';
     $('completionMessage').textContent='Cada misión te acerca a ser el Capitán Tiburón #1.';
-    $('continueCompletion').textContent='Continuar';
+    $('continueCompletion').textContent='🎮 Jugar reto de bonificación';
+    $('skipBonus').textContent='Continuar sin jugar';
     $('completionDialog').classList.remove('final-level');
   }
   $('completionDialog').showModal();
@@ -133,21 +139,41 @@ function validateMission(event){
   if(completedDay<29)state.day=completedDay+1;
   save();
   render();
-  showCompletion({level:completedDay+1,earned,oldRank:oldSharkRank,newRank:newSharkRank,finalMission});
+  showCompletion({level:completedDay+1,earned,oldRank:oldSharkRank,newRank:newSharkRank,finalMission,completedDay});
 }
 function buildCalendar(){const wrap=$('missionCalendar');wrap.innerHTML='';MISSIONS.forEach((m,index)=>{const button=document.createElement('button');button.type='button';button.className='mission-day';if(state.completed[index])button.classList.add('done');if(index===state.day)button.classList.add('current');button.innerHTML=`<small>Día ${index+1} · ${m.category}</small><strong></strong><span>${m.reward} netocoins · Meta ${targetText(m)}</span>`;button.querySelector('strong').textContent=m.title;button.addEventListener('click',()=>{state.day=index;$('calendarDialog').close();render();save()});wrap.appendChild(button)})}
 
+window.RetoTiburon={
+  getRank:()=>sharkRank().name,
+  playSfx,
+  toggleMusic(){setMusicEnabled(!audioPrefs.music);return audioPrefs.music},
+  setMatch3Active(active){
+    const player=$('backgroundMusic');if(!player)return;
+    if(active){musicVolumeBeforeMatch3=player.volume;player.volume=Math.min(audioPrefs.musicVolume,.18)}else{player.volume=audioPrefs.musicVolume;syncMusicForMission()}
+  },
+  addBonusCoins({level,reward,movesLeft,score}){
+    const index=Math.max(0,Math.min(29,Number(level)-1));
+    if(state.bonusPlayed?.[index])return {reward:0,rank:sharkRank().name,alreadyPlayed:true};
+    const safeReward=Math.max(0,Math.round(Number(reward)||0));
+    state.coins+=safeReward;
+    state.bonusPlayed[index]={won:true,reward:safeReward,movesLeft:Number(movesLeft)||0,score:Number(score)||0,date:new Date().toISOString()};
+    save();render();playSfx('coin');playSfx('rank',500);showStatus(`Ganaste ${safeReward} netocoins en el reto Match-3.`);
+    return {reward:safeReward,rank:sharkRank().name};
+  }
+};
+
 document.addEventListener('click',event=>{const button=event.target.closest('button');if(!button||button.disabled)return;unlockAudio();if(button.id!=='confirmValidation')playSfx('click')},{capture:true});
-$('newGameButton').addEventListener('click',()=>initialState(false)); $('demoButton').addEventListener('click',()=>initialState(true)); $('menuButton').addEventListener('click',()=>openDrawer(true)); $('closeDrawer').addEventListener('click',()=>openDrawer(false)); $('notificationButton').addEventListener('click',()=>{$('notificationPanel').hidden=!$('notificationPanel').hidden}); $('calendarButton').addEventListener('click',()=>{openDrawer(false);buildCalendar();$('calendarDialog').showModal()}); $('closeCalendar').addEventListener('click',()=>$('calendarDialog').close()); $('profileButton').addEventListener('click',()=>{openDrawer(false);render();$('profileDialog').showModal()}); $('closeProfile').addEventListener('click',()=>$('profileDialog').close()); $('musicTestButton').addEventListener('click',()=>{openDrawer(false);window.location.href='musica-extra.html?v=1.9'}); $('audioUnlockBanner').addEventListener('click',()=>{unlockAudio();showStatus('Música y efectos activados.')});
+$('newGameButton').addEventListener('click',()=>initialState(false)); $('demoButton').addEventListener('click',()=>initialState(true)); $('menuButton').addEventListener('click',()=>openDrawer(true)); $('closeDrawer').addEventListener('click',()=>openDrawer(false)); $('notificationButton').addEventListener('click',()=>{$('notificationPanel').hidden=!$('notificationPanel').hidden}); $('calendarButton').addEventListener('click',()=>{openDrawer(false);buildCalendar();$('calendarDialog').showModal()}); $('closeCalendar').addEventListener('click',()=>$('calendarDialog').close()); $('profileButton').addEventListener('click',()=>{openDrawer(false);render();$('profileDialog').showModal()}); $('closeProfile').addEventListener('click',()=>$('profileDialog').close()); $('musicTestButton').addEventListener('click',()=>{openDrawer(false);window.location.href='musica-extra.html?v=2.0'}); $('bonusGameDrawerButton').addEventListener('click',()=>{openDrawer(false);launchBonus(findPendingBonus())}); $('audioUnlockBanner').addEventListener('click',()=>{unlockAudio();showStatus('Música y efectos activados.')});
 $('musicToggle').addEventListener('click',()=>setMusicEnabled(!audioPrefs.music)); $('effectsToggle').addEventListener('click',()=>setEffectsEnabled(!audioPrefs.sfx)); $('musicVolume').addEventListener('input',e=>{audioPrefs.musicVolume=Number(e.target.value);$('backgroundMusic').volume=audioPrefs.musicVolume;saveAudioPrefs()}); $('effectsVolume').addEventListener('input',e=>{audioPrefs.sfxVolume=Number(e.target.value);saveAudioPrefs()});
-$('resetButton').addEventListener('click',()=>{if(confirm('¿Reiniciar todo el progreso de esta sucursal?')){const demo=state.demo;state.day=demo?6:0;state.coins=demo?1250:0;state.streak=demo?6:0;state.sales=demo?18900:0;state.completed=demo?Array.from({length:30},(_,i)=>i<6):Array(30).fill(false);state.evidence={};save();openDrawer(false);render()}});
+$('resetButton').addEventListener('click',()=>{if(confirm('¿Reiniciar todo el progreso de esta sucursal?')){const demo=state.demo;state.day=demo?6:0;state.coins=demo?1250:0;state.streak=demo?6:0;state.sales=demo?18900:0;state.completed=demo?Array.from({length:30},(_,i)=>i<6):Array(30).fill(false);state.evidence={};state.bonusPlayed={};save();openDrawer(false);render()}});
 $('logoutButton').addEventListener('click',()=>{openDrawer(false);pauseMusic();$('appShell').hidden=true;$('appShell').style.display='none';$('loginScreen').hidden=false;$('loginScreen').style.display='grid'});
 $('validateButton').addEventListener('click',openValidation); $('cancelValidation').addEventListener('click',()=>$('validationDialog').close()); $('validationForm').addEventListener('submit',validateMission); $('rankingToggle').addEventListener('click',()=>{renderFullRanking();$('rankingDialog').showModal()}); $('closeRanking').addEventListener('click',()=>$('rankingDialog').close()); $('nextMissionButton').addEventListener('click',()=>{if(state.day<29){state.day+=1;render();save()}});
 document.querySelectorAll('[data-category]').forEach(button=>button.addEventListener('click',()=>{const category=button.dataset.category;let index=MISSIONS.findIndex((m,i)=>i>=state.day&&m.category===category); if(index<0) index=MISSIONS.findIndex(m=>m.category===category); if(index>=0){state.day=index;showStatus(`Mostrando el siguiente reto de ${category}.`);render();save()}}));
 window.addEventListener('beforeinstallprompt',event=>{event.preventDefault();deferredInstallPrompt=event;$('installButton').hidden=false}); $('installButton').addEventListener('click',async()=>{if(!deferredInstallPrompt)return;deferredInstallPrompt.prompt();await deferredInstallPrompt.userChoice;deferredInstallPrompt=null;$('installButton').hidden=true});
 
-$('continueCompletion').addEventListener('click',()=>$('completionDialog').close());
+$('continueCompletion').addEventListener('click',()=>launchBonus(pendingBonusLevel));
+$('skipBonus').addEventListener('click',()=>$('completionDialog').close());
 $('closeCompletion').addEventListener('click',()=>$('completionDialog').close());
 document.addEventListener('visibilitychange',()=>{if(document.hidden){pauseMusic()}else if(audioUnlocked&&audioPrefs.music&&!$('appShell').hidden){syncMusicForMission()}});
-if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js?v=1.9').catch(()=>{}))}
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js?v=2.0').catch(()=>{}))}
 loadAudioPrefs(); if(load())enterApp();

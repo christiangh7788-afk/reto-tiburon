@@ -7,26 +7,27 @@
   <meta name="description" content="Reto Tiburón: misiones diarias de venta para sucursales.">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="styles.css?v=1.9">
+  <link rel="stylesheet" href="styles.css?v=2.0">
+  <link rel="stylesheet" href="match3.css?v=2.0">
   <title>Reto Tiburón</title>
 </head>
 <body>
   <section class="login-screen" id="loginScreen">
     <div class="login-card">
-      <img src="assets/tiburon.png?v=1.9" alt="Mascota Reto Tiburón">
+      <img src="assets/tiburon.png?v=2.0" alt="Mascota Reto Tiburón">
       <p class="login-eyebrow">RETO TIBURÓN</p>
       <h2>Entra con tu sucursal</h2>
       <label>Nombre de tienda<input id="storeNameInput" maxlength="45" value="Tienda Demo" autocomplete="organization"></label>
       <label>Número de sucursal<input id="storeCodeInput" maxlength="15" value="001" inputmode="numeric"></label>
       <div class="login-actions"><button id="newGameButton" type="button">Comenzar reto nuevo</button><button id="demoButton" class="demo" type="button">Entrar en modo demostración</button></div>
-      <small>Versión 1.9 con rangos, celebración de misiones y música Funk de ventas.</small>
+      <small>Versión 2.0 con reto Match-3 de bonificación, rangos y música Funk de ventas.</small>
     </div>
   </section>
 
   <main class="app-shell" id="appShell" hidden>
     <section class="stage-wrap">
       <div class="stage" id="stage">
-        <img class="stage-bg" src="assets/diseno-aprobado.png?v=1.9" alt="">
+        <img class="stage-bg" src="assets/diseno-aprobado.png?v=2.0" alt="">
 
         <button class="hit menu-hit" id="menuButton" type="button" aria-label="Abrir menú"></button>
         <button class="hit notif-hit" id="notificationButton" type="button" aria-label="Ver avisos"></button>
@@ -79,6 +80,7 @@
       <div class="drawer-head"><div><strong id="drawerStore">Mi tienda</strong><small id="drawerCode">Sucursal</small></div><button class="close-button" id="closeDrawer" type="button" aria-label="Cerrar">×</button></div>
       <button class="drawer-option" id="calendarButton" type="button">Calendario de 30 misiones</button>
       <button class="drawer-option" id="profileButton" type="button">Perfil de la sucursal</button>
+      <button class="drawer-option bonus-drawer" id="bonusGameDrawerButton" type="button">🎮 Jugar Match-3 pendiente</button>
       <button class="drawer-option" id="musicTestButton" type="button">Comparar otras músicas</button>
       <button class="drawer-option" id="installButton" type="button" hidden>Instalar en el celular</button>
       <section class="audio-settings" aria-label="Configuración de audio">
@@ -119,7 +121,7 @@
       <div class="level-ribbon" id="completionLevel">NIVEL 1</div>
       <h2 id="completionHeading">¡Bien hecho!</h2>
       <div class="completion-star" aria-hidden="true">★</div>
-      <img class="completion-shark" src="assets/tiburon.png?v=1.9" alt="Tiburón celebrando la misión cumplida">
+      <img class="completion-shark" src="assets/tiburon.png?v=2.0" alt="Tiburón celebrando la misión cumplida">
       <p class="completion-earned-label">Ganaste</p>
       <div class="completion-reward"><span class="completion-coin">n.</span><strong id="completionReward">+150</strong><b>netocoins</b></div>
       <div class="completion-message" id="completionMessage">Cada misión te acerca a ser el Capitán Tiburón #1.</div>
@@ -128,11 +130,52 @@
         <strong id="promotionText">Ahora eres Marinero Tiburón</strong>
       </div>
       <div class="rank-pill"><span id="completionRankIcon">⚓</span><small>Rango actual</small><strong id="completionRank">Aprendiz Tiburón</strong></div>
-      <button class="completion-continue" id="continueCompletion" type="button">Continuar</button>
+      <div class="completion-actions">
+        <button class="completion-continue" id="continueCompletion" type="button">🎮 Jugar reto de bonificación</button>
+        <button class="completion-skip" id="skipBonus" type="button">Continuar sin jugar</button>
+      </div>
+    </section>
+  </dialog>
+
+  <dialog class="match3-dialog" id="match3Dialog">
+    <section class="match3-shell" aria-label="Reto Match-3 de bonificación">
+      <header class="match3-top">
+        <button class="match3-back" id="match3Close" type="button" aria-label="Cerrar reto">×</button>
+        <div class="match3-title"><small id="match3Level">BONO 1</small><strong>Reto Tiburón<span> Match-3</span></strong></div>
+        <button class="match3-sound" type="button" aria-label="Audio del juego">🎵</button>
+      </header>
+      <section class="match3-hud">
+        <div class="match3-metric"><small>Movimientos</small><strong id="match3Moves">22</strong></div>
+        <div class="match3-metric"><small>Puntos</small><strong id="match3Score">0</strong></div>
+        <div class="match3-metric bonus"><small>Bono posible</small><strong id="match3Bonus">100 nc</strong></div>
+      </section>
+      <section class="match3-objectives" id="match3Objectives" aria-label="Objetivos del nivel"></section>
+      <section class="match3-board-wrap">
+        <div class="match3-board" id="match3Board" role="grid" aria-label="Tablero Match-3 de 9 por 9"></div>
+      </section>
+      <div class="match3-message" id="match3Message" aria-live="polite">Alinea 3 o más fichas.</div>
+      <div class="match3-legend"><span>4 = 🚀 cohete</span><span>5 = 🌈 bola de color</span><span>L/T = 💣 bomba</span></div>
+      <div class="match3-metric" style="margin-top:8px"><small>Rango actual</small><strong id="match3Rank">Aprendiz Tiburón</strong></div>
+      <section class="match3-result" id="match3Result" hidden>
+        <div class="match3-result-card">
+          <div class="match3-result-star">★</div>
+          <h2 id="match3ResultTitle">¡Reto superado!</h2>
+          <img class="match3-result-shark" src="assets/tiburon.png?v=2.0" alt="Tiburón celebrando">
+          <p id="match3ResultText">Objetivos completos.</p>
+          <div class="match3-result-reward" id="match3ResultRewardBox"><small>Ganaste</small><strong id="match3ResultReward">+100</strong><b>netocoins</b></div>
+          <p id="match3ResultRank"></p>
+          <div class="match3-result-actions">
+            <button class="match3-primary" id="match3ResultContinue" type="button">Continuar</button>
+            <button class="match3-primary" id="match3Retry" type="button" hidden>Volver a intentar</button>
+            <button class="match3-secondary" id="match3Exit" type="button">Salir del reto</button>
+          </div>
+        </div>
+      </section>
     </section>
   </dialog>
 
   <audio id="backgroundMusic" preload="auto" loop src="assets/audio/music-funk-de-ventas.mp3"></audio>
-  <script src="app.js?v=1.9"></script>
+  <script src="match3.js?v=2.0"></script>
+  <script src="app.js?v=2.0"></script>
 </body>
 </html>

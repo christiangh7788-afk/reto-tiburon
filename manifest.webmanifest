@@ -1,18 +1,13 @@
 {
-  "name": "Reto Tiburón",
+  "name": "Reto Tiburón Match-3",
   "short_name": "Reto Tiburón",
-  "description": "Misiones diarias de venta con rangos de tripulación, celebraciones, música Funk de ventas y efectos.",
-  "start_url": "./index.html",
+  "description": "Misiones diarias de venta con netocoins, rangos y un reto Match-3 de bonificación.",
+  "start_url": "./index.html?v=20",
   "display": "standalone",
   "background_color": "#021845",
   "theme_color": "#052b78",
   "lang": "es-MX",
   "icons": [
-    {
-      "src": "assets/icon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
-    }
+    {"src":"assets/icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}
   ]
 }

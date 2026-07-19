@@ -46,3 +46,7 @@ img{max-width:100%;display:block}
 @keyframes confettiFall{0%{transform:translateY(-20px) rotate(0);opacity:1}100%{transform:translateY(760px) rotate(520deg);opacity:.2}}
 @keyframes starPulse{from{transform:scale(.94) rotate(-2deg)}to{transform:scale(1.04) rotate(2deg)}}
 @media(max-width:430px){.completion-card{padding:66px 13px 15px;border-width:4px;border-radius:26px}.completion-shark{top:300px;right:-27px;width:48%}.completion-reward,.completion-message,.rank-pill,.completion-continue{width:87%}.completion-star{margin-bottom:-5px}.completion-message{font-size:14px}.rank-pill strong{font-size:14px}}
+
+/* V2.0: acciones de celebración y acceso Match-3 */
+.completion-actions{position:relative;z-index:7;width:82%;margin:13px auto 0;display:grid;gap:8px}.completion-actions .completion-continue{width:100%;margin:0;font-size:clamp(20px,6vw,31px)}.completion-skip{width:100%;padding:11px;border:2px solid rgba(255,255,255,.65);border-radius:15px;background:rgba(255,255,255,.12);color:#fff;font-weight:900}.bonus-drawer{background:linear-gradient(135deg,#fff3cc,#ffe5bd)!important;color:#8e3d00!important}.bonus-drawer[hidden]{display:none!important}
+@media(max-width:430px){.completion-actions{width:89%}.completion-actions .completion-continue{font-size:20px}}
