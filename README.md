@@ -1,31 +1,21 @@
-# Reto Tiburón V2.0
+# Reto Tiburón V3.0 — reconstrucción limpia
 
-Versión completa para GitHub Pages con:
+Esta versión usa las dos imágenes aprobadas como plantillas visuales fijas y dibuja únicamente los datos dinámicos en áreas previamente limpiadas. Ya no mezcla una captura completa con tarjetas HTML duplicadas.
 
-- 30 misiones diarias de venta.
-- netocoins, rachas, ranking y rangos de tripulación.
-- Música principal **Funk de ventas** y efectos.
-- Celebración después de validar cada misión.
-- Minijuego Match-3 de bonificación con tablero 9 × 9.
-- Intercambio por toque o deslizamiento.
-- Cascadas, cohetes, bombas y bolas de color.
-- Objetivos y movimientos limitados.
-- Bono adicional de netocoins al ganar.
-- Progreso guardado en el dispositivo.
-- Compatible con GitHub Pages y funcionamiento sin conexión.
+## Incluye
+- Interfaz principal 9:16 basada en el diseño aprobado.
+- Celebración basada en el diseño aprobado.
+- netocoins, rangos, rachas, ranking y 30 misiones.
+- Música Funk de ventas y efectos.
+- Match-3 de bonificación.
+- Guardado local compatible con el progreso anterior.
+- PWA y GitHub Pages.
 
 ## Publicación
-
 1. Descomprime el ZIP.
-2. Sube **todo el contenido** a la raíz del repositorio `reto-tiburon`.
-3. Confirma que `index.html`, `app.js`, `match3.js`, `styles.css` y `match3.css` estén en la raíz.
-4. Sube la carpeta `assets` completa.
-5. Haz **Commit changes**.
-6. Espera de 1 a 3 minutos.
-7. Abre:
+2. Reemplaza todos los archivos del repositorio.
+3. Sube la carpeta assets completa.
+4. Abre:
+   https://christiangh7788-afk.github.io/reto-tiburon/?v=30
 
-`https://christiangh7788-afk.github.io/reto-tiburon/?v=20`
-
-## Uso del Match-3
-
-Después de cumplir una misión aparece **Jugar reto de bonificación**. También puede abrirse posteriormente desde el menú mientras exista un bono pendiente.
+No mezcles archivos de V2.1 con V3.0.

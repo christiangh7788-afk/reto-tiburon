@@ -1,13 +1,15 @@
 {
-  "name": "Reto Tiburón Match-3",
+  "name": "Reto Tiburón",
   "short_name": "Reto Tiburón",
-  "description": "Misiones diarias de venta con netocoins, rangos y un reto Match-3 de bonificación.",
-  "start_url": "./index.html?v=20",
+  "start_url": "./?v=30",
   "display": "standalone",
-  "background_color": "#021845",
-  "theme_color": "#052b78",
-  "lang": "es-MX",
+  "background_color": "#03194f",
+  "theme_color": "#03194f",
   "icons": [
-    {"src":"assets/icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}
+    {
+      "src": "assets/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
   ]
 }
