@@ -1,7 +1,7 @@
 {
-  "name": "Reto Tiburón V6.1 — Completa",
-  "short_name": "Reto Tiburón",
-  "start_url": "./?v=61",
+  "name": "Reto Tiburón V7.0 Demo Completa",
+  "short_name": "Reto Tiburón V7",
+  "start_url": "./demo-completa.html?v=70",
   "display": "standalone",
   "background_color": "#020f34",
   "theme_color": "#03194f",
