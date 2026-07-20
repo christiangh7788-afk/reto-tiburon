@@ -36,14 +36,14 @@ const STORAGE_KEY='reto-tiburon-v1-state';
 const AUDIO_KEY='reto-tiburon-v3-audio';
 const $=id=>document.getElementById(id);
 const fmt=n=>Number(n).toLocaleString('es-MX');
-const state={storeName:'',storeCode:'',day:0,coins:0,streak:0,sales:0,completed:Array(30).fill(false),evidence:{},bonusPlayed:{},demo:false};
+const state={storeName:'',storeCode:'',playerName:'',day:0,coins:0,streak:0,sales:0,completed:Array(30).fill(false),evidence:{},bonusAccess:{},bonusPlayed:{},demo:false};
 const RANKS=[
 {min:0,max:5,name:'Aprendiz Tiburón',icon:'⚓'},
 {min:6,max:10,name:'Marinero Tiburón',icon:'🛟'},
 {min:11,max:20,name:'Oficial Tiburón',icon:'★'},
 {min:21,max:29,name:'Comandante Tiburón',icon:'🏅'},
 {min:30,max:30,name:'Capitán Tiburón #1',icon:'👑'}];
-let audioUnlocked=false,pendingBonusLevel=0,lastCompletion=null;
+let audioUnlocked=false,pendingBonusLevel=0,lastCompletion=null,playerNameEditing=false;
 const audioPrefs={music:true,sfx:true};
 const sounds={};
 const soundPaths={click:'assets/audio/click.wav',coin:'assets/audio/coin.wav',success:'assets/audio/success.wav',error:'assets/audio/error.wav',rank:'assets/audio/rank-up.wav'};
@@ -55,14 +55,164 @@ function rankFor(count=missionCount()){return RANKS.find(r=>count>=r.min&&count<
 function targetText(m){return m.unit==='MXN'?`$${fmt(m.target)} MXN`:`${fmt(m.target)} ${m.unit}`}
 function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}
 function load(){
- try{const raw=localStorage.getItem(STORAGE_KEY);if(!raw)return false;Object.assign(state,JSON.parse(raw));state.completed=Array.isArray(state.completed)&&state.completed.length===30?state.completed:Array(30).fill(false);state.evidence=state.evidence||{};state.bonusPlayed=state.bonusPlayed||{};state.day=Math.max(0,Math.min(29,Number(state.day)||0));state.coins=Math.max(0,Number(state.coins)||0);state.streak=Math.max(0,Number(state.streak)||0);state.sales=Math.max(0,Math.min(30000,Number(state.sales)||0));return Boolean(state.storeName)}catch{return false}
+ try{const raw=localStorage.getItem(STORAGE_KEY);if(!raw)return false;Object.assign(state,JSON.parse(raw));state.completed=Array.isArray(state.completed)&&state.completed.length===30?state.completed:Array(30).fill(false);state.evidence=state.evidence||{};state.bonusAccess=state.bonusAccess||{};state.bonusPlayed=state.bonusPlayed||{};state.playerName=String(state.playerName||'').trim();state.day=Math.max(0,Math.min(29,Number(state.day)||0));state.coins=Math.max(0,Number(state.coins)||0);state.streak=Math.max(0,Number(state.streak)||0);state.sales=Math.max(0,Math.min(30000,Number(state.sales)||0));return Boolean(state.storeName)}catch{return false}
 }
 function initSounds(){Object.entries(soundPaths).forEach(([k,p])=>{const a=new Audio(p);a.preload='auto';sounds[k]=a})}
 function sfx(name){if(!audioUnlocked||!audioPrefs.sfx||!sounds[name])return;const a=sounds[name].cloneNode(true);a.volume=.75;a.play().catch(()=>{})}
 function unlockAudio(){audioUnlocked=true;const p=$('backgroundMusic');p.volume=.34;if(audioPrefs.music)p.play().catch(()=>{});$('audioUnlockBanner').hidden=true}
 function toast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._timer);t._timer=setTimeout(()=>t.classList.remove('show'),2600)}
-function enterApp(){$('loginScreen').hidden=true;$('appShell').hidden=false;$('drawerStore').textContent=state.storeName;$('drawerCode').textContent=`Sucursal ${state.storeCode}`;renderMain()}
-function initialState(demo){state.storeName=$('storeNameInput').value.trim()||'Tienda Demo';state.storeCode=$('storeCodeInput').value.trim()||'001';state.demo=demo;state.evidence={};state.bonusPlayed={};if(demo){state.day=6;state.coins=1250;state.streak=6;state.sales=18900;state.completed=Array.from({length:30},(_,i)=>i<6)}else{state.day=0;state.coins=0;state.streak=0;state.sales=0;state.completed=Array(30).fill(false)}save();enterApp();unlockAudio()}
+function enterApp(){$('loginScreen').hidden=true;$('playerNameScreen').hidden=true;$('appShell').hidden=false;$('drawerPlayer').textContent=state.playerName||'Jugador';$('drawerRank').textContent=rankFor().name;$('drawerStore').textContent=state.storeName;$('drawerCode').textContent=`Sucursal ${state.storeCode}`;renderMain()}
+function initialState(demo){state.storeName=$('storeNameInput').value.trim()||'Tienda Demo';state.storeCode=$('storeCodeInput').value.trim()||'001';state.playerName='';state.demo=demo;state.evidence={};state.bonusAccess={};state.bonusPlayed={};if(demo){state.day=6;state.coins=1250;state.streak=6;state.sales=18900;state.completed=Array.from({length:30},(_,i)=>i<6)}else{state.day=0;state.coins=0;state.streak=0;state.sales=0;state.completed=Array(30).fill(false)}save();showPlayerNameScreen(false);unlockAudio()}
+
+function playerNameValue(){return $('playerNameInput').value.trim().replace(/\s+/g,' ')}
+function updatePlayerNamePreview(){
+ const value=playerNameValue();
+ $('playerNameCounter').textContent=`${$('playerNameInput').value.length}/16`;
+ $('playerPreviewName').textContent=value||'Tu nombre aparecerá aquí';
+ $('playerPreviewInitial').textContent=value?value.charAt(0).toUpperCase():'?';
+ $('playerNameError').textContent='';
+ document.querySelectorAll('[data-player-name]').forEach(button=>button.classList.toggle('active',button.dataset.playerName===value));
+}
+function showPlayerNameScreen(editing=false){
+ playerNameEditing=editing;
+ $('loginScreen').hidden=true;
+ $('appShell').hidden=true;
+ $('playerNameScreen').hidden=false;
+ $('playerNameInput').value=state.playerName||'';
+ $('cancelPlayerNameButton').hidden=!editing;
+ $('confirmPlayerNameButton').textContent=editing?'GUARDAR NUEVO NOMBRE':'¡COMENZAR AVENTURA!';
+ updatePlayerNamePreview();
+ setTimeout(()=>$('playerNameInput').focus(),120);
+}
+function confirmPlayerName(){
+ const value=playerNameValue();
+ if(value.length<3||value.length>16){$('playerNameError').textContent='Usa un nombre de entre 3 y 16 caracteres.';sfx('error');return}
+ state.playerName=value;save();$('playerNameScreen').hidden=true;enterApp();sfx('success');toast(`¡Bienvenido a la aventura, ${value}!`)
+}
+
+
+const EVIDENCE_DB_NAME='reto-tiburon-evidence-v1';
+const EVIDENCE_STORE='photos';
+const photoPreviewUrls={mission:'',bonus:''};
+
+function openEvidenceDB(){
+ return new Promise((resolve,reject)=>{
+  const request=indexedDB.open(EVIDENCE_DB_NAME,1);
+  request.onupgradeneeded=()=>{const db=request.result;if(!db.objectStoreNames.contains(EVIDENCE_STORE))db.createObjectStore(EVIDENCE_STORE,{keyPath:'key'})};
+  request.onsuccess=()=>resolve(request.result);
+  request.onerror=()=>reject(request.error);
+ });
+}
+async function compressEvidencePhoto(file){
+ if(!file)return null;
+ let bitmap;
+ try{
+  if('createImageBitmap'in window)bitmap=await createImageBitmap(file);
+  else{
+   bitmap=await new Promise((resolve,reject)=>{
+    const img=new Image(),url=URL.createObjectURL(file);
+    img.onload=()=>{URL.revokeObjectURL(url);resolve(img)};
+    img.onerror=()=>{URL.revokeObjectURL(url);reject(new Error('No se pudo leer la imagen.'))};
+    img.src=url;
+   });
+  }
+  const maxSide=1280;
+  const scale=Math.min(1,maxSide/Math.max(bitmap.width,bitmap.height));
+  const canvas=document.createElement('canvas');
+  canvas.width=Math.max(1,Math.round(bitmap.width*scale));
+  canvas.height=Math.max(1,Math.round(bitmap.height*scale));
+  const ctx=canvas.getContext('2d',{alpha:false});
+  ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.drawImage(bitmap,0,0,canvas.width,canvas.height);
+  if(bitmap.close)bitmap.close();
+  const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/jpeg',.78));
+  if(!blob)throw new Error('No se pudo comprimir la fotografía.');
+  return blob;
+ }catch(error){
+  if(file.size>8*1024*1024)throw new Error('La fotografía es demasiado grande. Intenta tomarla nuevamente.');
+  return file;
+ }
+}
+async function storeEvidencePhoto({key,file,kind,index,title}){
+ const blob=await compressEvidencePhoto(file);
+ const db=await openEvidenceDB();
+ await new Promise((resolve,reject)=>{
+  const tx=db.transaction(EVIDENCE_STORE,'readwrite');
+  tx.objectStore(EVIDENCE_STORE).put({
+   key,blob,kind,index,title,
+   originalName:file.name||'evidencia.jpg',
+   mimeType:blob.type||file.type||'image/jpeg',
+   size:blob.size,
+   createdAt:new Date().toISOString()
+  });
+  tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error);
+ });
+ db.close();
+ let photoUrl='';
+ if(typeof window.RetoEvidenceUploader==='function'){
+  try{
+   const response=await window.RetoEvidenceUploader({key,blob,kind,index,title,fileName:file.name||'evidencia.jpg'});
+   photoUrl=typeof response==='string'?response:String(response?.url||'');
+  }catch(error){console.warn('La evidencia quedó local; la carga remota falló.',error)}
+ }
+ return {
+  localKey:key,
+  photoUrl,
+  syncStatus:photoUrl?'uploaded':'local',
+  fileName:file.name||'evidencia.jpg',
+  mimeType:blob.type||file.type||'image/jpeg',
+  size:blob.size
+ };
+}
+async function getStoredEvidencePhoto(key){
+ const db=await openEvidenceDB();
+ const result=await new Promise((resolve,reject)=>{
+  const tx=db.transaction(EVIDENCE_STORE,'readonly');
+  const request=tx.objectStore(EVIDENCE_STORE).get(key);
+  request.onsuccess=()=>resolve(request.result||null);
+  request.onerror=()=>reject(request.error);
+ });
+ db.close();return result;
+}
+async function clearStoredEvidencePhotos(){
+ try{
+  const db=await openEvidenceDB();
+  await new Promise((resolve,reject)=>{
+   const tx=db.transaction(EVIDENCE_STORE,'readwrite');
+   tx.objectStore(EVIDENCE_STORE).clear();
+   tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);
+  });
+  db.close();
+ }catch(error){console.warn('No se pudieron borrar las evidencias locales.',error)}
+}
+function resetPhotoControl(kind){
+ const input=$(kind==='mission'?'missionEvidencePhoto':'bonusEvidencePhoto');
+ const preview=$(kind==='mission'?'missionEvidencePreview':'bonusEvidencePreview');
+ const wrap=$(kind==='mission'?'missionEvidencePreviewWrap':'bonusEvidencePreviewWrap');
+ const status=$(kind==='mission'?'missionEvidenceStatus':'bonusEvidenceStatus');
+ if(photoPreviewUrls[kind]){URL.revokeObjectURL(photoPreviewUrls[kind]);photoPreviewUrls[kind]=''}
+ input.value='';preview.removeAttribute('src');wrap.hidden=true;status.classList.remove('ready');
+ status.textContent=kind==='mission'?'Debes agregar una fotografía para continuar.':'La fotografía es necesaria para abrir el reto de bonificación.';
+}
+function showPhotoPreview(kind,file){
+ const preview=$(kind==='mission'?'missionEvidencePreview':'bonusEvidencePreview');
+ const wrap=$(kind==='mission'?'missionEvidencePreviewWrap':'bonusEvidencePreviewWrap');
+ const status=$(kind==='mission'?'missionEvidenceStatus':'bonusEvidenceStatus');
+ if(photoPreviewUrls[kind])URL.revokeObjectURL(photoPreviewUrls[kind]);
+ photoPreviewUrls[kind]=URL.createObjectURL(file);
+ preview.src=photoPreviewUrls[kind];wrap.hidden=false;status.classList.add('ready');
+ status.textContent='Fotografía lista para guardar.';
+}
+function bindPhotoControl(kind){
+ const input=$(kind==='mission'?'missionEvidencePhoto':'bonusEvidencePhoto');
+ const remove=$(kind==='mission'?'removeMissionEvidence':'removeBonusEvidence');
+ input.addEventListener('change',()=>{
+  const file=input.files?.[0];
+  if(file&&!file.type.startsWith('image/')){resetPhotoControl(kind);toast('Selecciona una imagen válida.');sfx('error');return}
+  if(file)showPhotoPreview(kind,file);else resetPhotoControl(kind);
+ });
+ remove.addEventListener('click',()=>resetPhotoControl(kind));
+}
 
 function text(ctx,text,x,y,size,color='#fff',align='left',weight='900'){
  ctx.save();ctx.fillStyle=color;ctx.textAlign=align;ctx.textBaseline='top';ctx.font=`${weight} ${size}px Arial`;ctx.fillText(text,x,y);ctx.restore()
@@ -196,60 +346,157 @@ function renderCompletion(data){
  text(ctx,`NIVEL ${data.level}`,512,207,64,'#fff','center','900');
  text(ctx,`+${data.earned}`,520,855,79,'#ffbd00','center','900');text(ctx,'netocoins',520,938,43,'#fff','center','900');
  const promoted=data.oldRank.name!==data.newRank.name;
- const message=data.finalMission?'¡Ya eres el Capitán Tiburón #1!':promoted?`¡Ascenso desbloqueado! ${data.newRank.name}`:'Cada misión te acerca a ser el Capitán Tiburón #1.';
+ const hero=state.playerName||'Tiburón';const message=data.finalMission?`¡${hero}, ya eres el Capitán Tiburón #1!`:promoted?`¡${hero}, ascenso desbloqueado! ${data.newRank.name}`:`¡Sigue así, ${hero}! Cada misión te acerca a ser el Capitán Tiburón #1.`;
  wrap(ctx,message,330,1020,370,45,3,31,promoted?'#ffbd00':'#fff','900');
  text(ctx,`${data.newRank.icon}  ${data.newRank.name}`,510,1176,31,'#fff','center','900');
  $('completionOverlay').hidden=false
 }
-function openValidation(){const m=MISSIONS[state.day];if(state.completed[state.day]){toast('Esta misión ya fue cumplida.');return}$('validationTitle').textContent=m.title;$('validationHelp').textContent=`Meta: ${targetText(m)}`;$('resultInput').value='';$('evidenceInput').value='';$('validationDialog').showModal();setTimeout(()=>$('resultInput').focus(),100)}
-function validateMission(ev){
- ev.preventDefault();const m=MISSIONS[state.day],completedDay=state.day,result=Number($('resultInput').value);
+function openValidation(){
+ const m=MISSIONS[state.day];
+ if(state.completed[state.day]){toast('Esta misión ya fue cumplida.');return}
+ $('validationTitle').textContent=m.title;
+ $('validationHelp').textContent=`Meta: ${targetText(m)}`;
+ $('resultInput').value='';
+ resetPhotoControl('mission');
+ $('validationDialog').showModal();
+ setTimeout(()=>$('resultInput').focus(),100)
+}
+async function validateMission(ev){
+ ev.preventDefault();
+ const m=MISSIONS[state.day],completedDay=state.day,result=Number($('resultInput').value);
+ const photoFile=$('missionEvidencePhoto').files?.[0];
  if(!Number.isFinite(result)||result<0){$('validationHelp').textContent='Captura un resultado válido.';sfx('error');return}
  if(result<m.target){const miss=m.target-result;$('validationHelp').textContent=`Todavía faltan ${m.unit==='MXN'?'$'+fmt(miss):fmt(miss)+' '+m.unit}.`;sfx('error');return}
- const oldRank=rankFor(),bonus=Math.min(state.streak*10,100),earned=m.reward+bonus;
- state.completed[completedDay]=true;state.coins+=earned;state.streak++;state.sales=Math.min(30000,state.sales+m.monthlyValue);state.evidence[completedDay]={result,evidence:$('evidenceInput').value.trim(),date:new Date().toISOString()};
- const newRank=rankFor(),finalMission=missionCount()===30;if(completedDay<29)state.day=completedDay+1;pendingBonusLevel=completedDay;save();renderMain();$('validationDialog').close();sfx('coin');setTimeout(()=>sfx('success'),160);if(oldRank.name!==newRank.name)setTimeout(()=>sfx('rank'),700);
- lastCompletion={level:completedDay+1,earned,oldRank,newRank,finalMission};renderCompletion(lastCompletion)
+ if(!photoFile){$('missionEvidenceStatus').textContent='La evidencia fotográfica es obligatoria para completar la misión.';$('missionEvidenceStatus').classList.remove('ready');sfx('error');return}
+
+ const submit=$('validationSubmitButton');
+ submit.disabled=true;submit.textContent='Guardando evidencia…';
+ try{
+  const photo=await storeEvidencePhoto({
+   key:`mission-${completedDay+1}`,
+   file:photoFile,kind:'mission',index:completedDay+1,title:m.title
+  });
+  const oldRank=rankFor(),bonus=Math.min(state.streak*10,100),earned=m.reward+bonus;
+  state.completed[completedDay]=true;state.coins+=earned;state.streak++;
+  state.sales=Math.min(30000,state.sales+m.monthlyValue);
+  state.evidence[completedDay]={
+   result,
+   date:new Date().toISOString(),
+   missionTitle:m.title,
+   photo,
+   photoUrl:photo.photoUrl||''
+  };
+  const newRank=rankFor(),finalMission=missionCount()===30;
+  if(completedDay<29)state.day=completedDay+1;
+  pendingBonusLevel=completedDay;save();$('drawerRank').textContent=newRank.name;renderMain();
+  $('validationDialog').close();resetPhotoControl('mission');
+  sfx('coin');setTimeout(()=>sfx('success'),160);if(oldRank.name!==newRank.name)setTimeout(()=>sfx('rank'),700);
+  lastCompletion={level:completedDay+1,earned,oldRank,newRank,finalMission};renderCompletion(lastCompletion)
+ }catch(error){
+  console.error(error);$('missionEvidenceStatus').textContent=error.message||'No se pudo guardar la fotografía.';$('missionEvidenceStatus').classList.remove('ready');sfx('error');
+ }finally{
+  submit.disabled=false;submit.textContent='Comprobar misión';
+ }
 }
 function openDrawer(open){$('drawer').classList.toggle('open',open);$('drawer').setAttribute('aria-hidden',String(!open))}
 function rankingData(){return [...COMPETITORS,{name:state.storeName||'Mi tienda',points:state.coins,me:true}].sort((a,b)=>b.points-a.points)}
 function renderRanking(){const list=$('rankingFullList');list.innerHTML='';rankingData().forEach((r,i)=>{const d=document.createElement('div');d.className='rank-item';d.innerHTML=`<span>${i+1}. ${r.name}</span><b>${fmt(r.points)} nc</b>`;list.appendChild(d)})}
 function buildCalendar(){const list=$('missionCalendar');list.innerHTML='';MISSIONS.forEach((m,i)=>{const b=document.createElement('button');b.innerHTML=`<strong>Día ${i+1}: ${m.title}</strong><br><small>${m.reward} netocoins · ${targetText(m)}</small>`;b.onclick=()=>{state.day=i;save();renderMain();$('calendarDialog').close()};list.appendChild(b)})}
 function pendingBonus(){for(let i=29;i>=0;i--)if(state.completed[i]&&!state.bonusPlayed[i])return i;return -1}
-function launchBonus(index=pendingBonus()){if(index<0){toast('No hay retos de bonificación pendientes.');return}pendingBonusLevel=index;if(!window.RetoMatch3){toast('El Match-3 todavía no está disponible.');return}window.RetoMatch3.start({level:index+1,onFinish:()=>renderMain()})}
+function launchBonus(index=pendingBonus()){
+ if(index<0){toast('No hay retos de bonificación pendientes.');return}
+ pendingBonusLevel=index;
+ if(!window.RetoMatch3){toast('El Match-3 todavía no está disponible.');return}
+ window.RetoMatch3.start({level:index+1,onFinish:()=>renderMain()})
+}
+function requestBonusAccess(index=pendingBonus()){
+ if(index<0){toast('No hay retos de bonificación pendientes.');return}
+ pendingBonusLevel=index;
+ const access=state.bonusAccess?.[index];
+ if(access?.photo?.localKey||access?.photoUrl){launchBonus(index);return}
+ resetPhotoControl('bonus');
+ $('bonusMissionHelp').textContent=`Mini misión del día ${index+1}: reconoce a un colaborador con una distinción neto y registra la fotografía.`;
+ $('bonusMissionDialog').showModal();
+}
+async function validateBonusMission(ev){
+ ev.preventDefault();
+ const index=pendingBonusLevel;
+ const file=$('bonusEvidencePhoto').files?.[0];
+ if(index<0){$('bonusMissionDialog').close();toast('No hay bonificaciones pendientes.');return}
+ if(!file){$('bonusEvidenceStatus').textContent='Debes tomar una fotografía para desbloquear el Match‑3.';$('bonusEvidenceStatus').classList.remove('ready');sfx('error');return}
+ const submit=$('bonusMissionSubmitButton');
+ submit.disabled=true;submit.textContent='Guardando evidencia…';
+ try{
+  const title='Entrega una distinción neto';
+  const photo=await storeEvidencePhoto({
+   key:`bonus-access-${index+1}`,
+   file,kind:'bonus-access',index:index+1,title
+  });
+  state.bonusAccess[index]={
+   title,
+   completedAt:new Date().toISOString(),
+   photo,
+   photoUrl:photo.photoUrl||''
+  };
+  save();$('bonusMissionDialog').close();resetPhotoControl('bonus');
+  toast('Mini misión validada. ¡Match‑3 desbloqueado!');
+  sfx('success');launchBonus(index);
+ }catch(error){
+  console.error(error);$('bonusEvidenceStatus').textContent=error.message||'No se pudo guardar la fotografía.';$('bonusEvidenceStatus').classList.remove('ready');sfx('error');
+ }finally{
+  submit.disabled=false;submit.textContent='Validar evidencia y jugar';
+ }
+}
 
 window.RetoTiburon={
  getRank:()=>rankFor().name,
+ getPlayerName:()=>state.playerName||'Jugador',
  playSfx:sfx,
  toggleMusic(){audioPrefs.music=!audioPrefs.music;if(audioPrefs.music)unlockAudio();else $('backgroundMusic').pause();return audioPrefs.music},
  setMatch3Active(active){$('backgroundMusic').volume=active?.16:.34},
- addBonusCoins({level,reward,movesLeft,score}){const index=Math.max(0,Math.min(29,Number(level)-1));if(state.bonusPlayed[index])return{reward:0,rank:rankFor().name,alreadyPlayed:true};const r=Math.max(0,Math.round(Number(reward)||0));state.coins+=r;state.bonusPlayed[index]={won:true,reward:r,movesLeft,score,date:new Date().toISOString()};save();renderMain();sfx('coin');toast(`Ganaste ${r} netocoins en Match-3.`);return{reward:r,rank:rankFor().name}}
+ addBonusCoins({level,reward,movesLeft,score}){const index=Math.max(0,Math.min(29,Number(level)-1));if(state.bonusPlayed[index])return{reward:0,rank:rankFor().name,alreadyPlayed:true};const r=Math.max(0,Math.round(Number(reward)||0));state.coins+=r;state.bonusPlayed[index]={won:true,reward:r,movesLeft,score,date:new Date().toISOString()};save();renderMain();sfx('coin');toast(`Ganaste ${r} netocoins en Match-3.`);return{reward:r,rank:rankFor().name}},
+ getEvidencePhoto:getStoredEvidencePhoto,
+ getEvidenceQueue:()=>({missions:state.evidence,bonusAccess:state.bonusAccess}),
+ setEvidencePhotoUrl({kind,index,url}){
+  const clean=String(url||'').trim();if(!clean)return false;
+  if(kind==='mission'&&state.evidence[index]){state.evidence[index].photoUrl=clean;if(state.evidence[index].photo){state.evidence[index].photo.photoUrl=clean;state.evidence[index].photo.syncStatus='uploaded'}}
+  else if(kind==='bonus-access'&&state.bonusAccess[index]){state.bonusAccess[index].photoUrl=clean;if(state.bonusAccess[index].photo){state.bonusAccess[index].photo.photoUrl=clean;state.bonusAccess[index].photo.syncStatus='uploaded'}}
+  else return false;
+  save();return true
+ }
 };
 
 $('newGameButton').onclick=()=>initialState(false);$('demoButton').onclick=()=>initialState(true);
-$('menuButton').onclick=()=>openDrawer(true);$('closeDrawer').onclick=()=>openDrawer(false);$('drawerShade').onclick=()=>openDrawer(false);
+$('playerNameInput').addEventListener('input',updatePlayerNamePreview);
+document.querySelectorAll('[data-player-name]').forEach(button=>button.onclick=()=>{$('playerNameInput').value=button.dataset.playerName;updatePlayerNamePreview()});
+$('confirmPlayerNameButton').onclick=confirmPlayerName;
+$('cancelPlayerNameButton').onclick=()=>{$('playerNameScreen').hidden=true;enterApp()};
+$('menuButton').onclick=()=>openDrawer(true);$('changePlayerNameButton').onclick=()=>{openDrawer(false);showPlayerNameScreen(true)};$('closeDrawer').onclick=()=>openDrawer(false);$('drawerShade').onclick=()=>openDrawer(false);
 $('notificationButton').onclick=()=>{$('notificationPanel').hidden=!$('notificationPanel').hidden};
-$('validateButton').onclick=openValidation;$('cancelValidation').onclick=()=>$('validationDialog').close();$('validationForm').onsubmit=validateMission;
+$('validateButton').onclick=openValidation;$('cancelValidation').onclick=()=>{$('validationDialog').close();resetPhotoControl('mission')};$('validationForm').onsubmit=validateMission;
 $('rankingToggle').onclick=()=>{renderRanking();$('rankingDialog').showModal()};$('closeRanking').onclick=()=>$('rankingDialog').close();
 $('calendarButton').onclick=()=>{openDrawer(false);buildCalendar();$('calendarDialog').showModal()};$('closeCalendar').onclick=()=>$('calendarDialog').close();
-$('bonusGameDrawerButton').onclick=()=>{openDrawer(false);launchBonus()};
+$('bonusGameDrawerButton').onclick=()=>{openDrawer(false);requestBonusAccess()};
 $('audioUnlockBanner').onclick=()=>{unlockAudio();toast('Música y efectos activados.')};
 $('musicToggle').onclick=()=>{audioPrefs.music=!audioPrefs.music;if(audioPrefs.music)unlockAudio();else $('backgroundMusic').pause();$('musicToggle').querySelector('b').textContent=audioPrefs.music?'Activada':'Silenciada';localStorage.setItem(AUDIO_KEY,JSON.stringify(audioPrefs))};
 $('effectsToggle').onclick=()=>{audioPrefs.sfx=!audioPrefs.sfx;$('effectsToggle').querySelector('b').textContent=audioPrefs.sfx?'Activados':'Silenciados';localStorage.setItem(AUDIO_KEY,JSON.stringify(audioPrefs))};
-$('resetButton').onclick=()=>{if(confirm('¿Reiniciar todo el progreso?')){const demo=state.demo;state.day=demo?6:0;state.coins=demo?1250:0;state.streak=demo?6:0;state.sales=demo?18900:0;state.completed=demo?Array.from({length:30},(_,i)=>i<6):Array(30).fill(false);state.evidence={};state.bonusPlayed={};save();renderMain();openDrawer(false)}};
-$('logoutButton').onclick=()=>{openDrawer(false);$('backgroundMusic').pause();$('appShell').hidden=true;$('loginScreen').hidden=false};
+$('resetButton').onclick=()=>{if(confirm('¿Reiniciar todo el progreso?')){const demo=state.demo;state.day=demo?6:0;state.coins=demo?1250:0;state.streak=demo?6:0;state.sales=demo?18900:0;state.completed=demo?Array.from({length:30},(_,i)=>i<6):Array(30).fill(false);state.evidence={};state.bonusAccess={};state.bonusPlayed={};clearStoredEvidencePhotos();save();renderMain();openDrawer(false)}};
+$('logoutButton').onclick=()=>{openDrawer(false);$('backgroundMusic').pause();$('appShell').hidden=true;$('playerNameScreen').hidden=true;$('loginScreen').hidden=false};
 $('closeCompletion').onclick=()=>{$('completionOverlay').hidden=true};
 $('continueCompletion').onclick=()=>{$('completionOverlay').hidden=true;$('bonusChoiceDialog').showModal()};
-$('playBonusButton').onclick=()=>{$('bonusChoiceDialog').close();launchBonus(pendingBonusLevel)};
+$('playBonusButton').onclick=()=>{$('bonusChoiceDialog').close();requestBonusAccess(pendingBonusLevel)};
 $('skipBonusButton').onclick=()=>{$('bonusChoiceDialog').close()};
+$('cancelBonusMission').onclick=()=>{$('bonusMissionDialog').close();resetPhotoControl('bonus')};
+$('bonusMissionForm').onsubmit=validateBonusMission;
 document.querySelectorAll('[data-category]').forEach(b=>b.onclick=()=>{const cat=b.dataset.category;let i=MISSIONS.findIndex((m,n)=>n>=state.day&&m.category===cat);if(i<0)i=MISSIONS.findIndex(m=>m.category===cat);if(i>=0){state.day=i;save();renderMain();toast(`Mostrando ${cat}.`)}});
 
 document.addEventListener('click',e=>{if(e.target.closest('button')){if(!audioUnlocked)unlockAudio();sfx('click')}},{capture:true});
 document.addEventListener('visibilitychange',()=>{if(document.hidden)$('backgroundMusic').pause();else if(audioUnlocked&&audioPrefs.music)$('backgroundMusic').play().catch(()=>{})});
-if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js?v=3.1').catch(()=>{}));
+if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js?v=3.4').catch(()=>{}));
 
+bindPhotoControl('mission');bindPhotoControl('bonus');
 initSounds();
 try{Object.assign(audioPrefs,JSON.parse(localStorage.getItem(AUDIO_KEY)||'{}'))}catch{}
 mainImage.onload=renderMain;
 const params=new URLSearchParams(location.search);
-if(load())enterApp();else if(params.get('demo')==='1'){state.storeName='Tienda Demo';state.storeCode='001';state.demo=true;state.day=6;state.coins=1250;state.streak=6;state.sales=18900;state.completed=Array.from({length:30},(_,i)=>i<6);save();enterApp()}
+if(load()){if(state.playerName)enterApp();else showPlayerNameScreen(false)}else if(params.get('demo')==='1'){state.storeName='Tienda Demo';state.storeCode='001';state.playerName='';state.demo=true;state.day=6;state.coins=1250;state.streak=6;state.sales=18900;state.completed=Array.from({length:30},(_,i)=>i<6);save();showPlayerNameScreen(false)}

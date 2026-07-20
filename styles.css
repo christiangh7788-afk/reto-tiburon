@@ -5,6 +5,7 @@ html,body{margin:0;min-height:100%;background:#02133d;font-family:Arial,Helvetic
 body{overflow-x:hidden}
 [hidden]{display:none!important}
 button,input{font:inherit}
+.player-name-screen{min-height:100svh;background:#03194f;color:#fff;overflow:auto}
 .login-screen{min-height:100svh;display:grid;place-items:center;padding:18px;background:radial-gradient(circle at 70% 15%,#13bbff55,transparent 27%),linear-gradient(180deg,#0757bc,#03143f)}
 .login-card{width:min(430px,100%);padding:24px;border-radius:26px;background:#071b4d;color:#fff;border:1px solid #ffffff24;box-shadow:0 24px 70px #0008}
 .login-card img{display:block;width:150px;height:150px;object-fit:cover;object-position:52% 18%;border-radius:50%;margin:auto;border:4px solid #19c8ff}
@@ -38,3 +39,134 @@ button,input{font:inherit}
 .bonus-choice .primary{background:linear-gradient(#75dc1c,#3aa500)}.bonus-choice .secondary{margin-top:9px}
 .toast{position:fixed;z-index:100;left:50%;bottom:20px;transform:translate(-50%,30px);opacity:0;padding:12px 17px;border-radius:999px;background:#071d55;color:#fff;font-weight:900;transition:.2s;pointer-events:none}.toast.show{opacity:1;transform:translate(-50%,0)}
 @media(min-width:700px){.game-stage{border-radius:26px;box-shadow:0 25px 70px #000b}.viewport{padding:20px}}
+
+
+.player-name-scene{
+  position:relative;isolation:isolate;width:min(100%,760px);min-height:100svh;margin:auto;padding:24px 16px 28px;
+  background:linear-gradient(#00184044,#00143ddd),url('assets/player-name-bg.jpg') center/cover;
+  overflow:hidden;
+}
+.player-name-scene:before,.player-name-scene:after{content:"";position:absolute;z-index:-1;border:2px solid #ffad16;border-radius:40px;opacity:.7}
+.player-name-scene:before{inset:20px 10px auto;height:360px;border-bottom:0}.player-name-scene:after{inset:auto 8px 18px;height:270px;border-top:0}
+.player-adventure-logo{text-align:center;position:relative;z-index:3;text-shadow:0 4px 0 #001444,0 8px 18px #000b}
+.player-adventure-logo small{display:block;letter-spacing:.34em;font-weight:900;font-size:11px}
+.player-adventure-logo strong{display:block;font-size:clamp(43px,13vw,78px);font-weight:1000;line-height:.92;font-style:italic;color:#fff;letter-spacing:-.04em}
+.player-adventure-logo strong span{display:block;color:#ffb20a;-webkit-text-stroke:2px #7c3c00;text-shadow:0 5px 0 #693300,0 10px 20px #000a}
+.player-adventure-logo p{margin:7px 0 0;font-size:15px;font-weight:900;color:#d8e6ff}
+.player-shark-art{position:absolute;z-index:1;left:-70px;top:210px;width:min(62vw,330px);border-radius:42% 42% 18% 18%;filter:drop-shadow(0 18px 22px #0009);mask-image:linear-gradient(#000 72%,transparent 100%)}
+.player-name-card{position:relative;z-index:2;width:min(92%,510px);margin:250px 0 0 auto;padding:22px 18px 18px;border:4px solid #ffad16;border-radius:26px;background:linear-gradient(180deg,#0645a9ee,#031d63f4);box-shadow:inset 0 0 0 3px #082b70,0 18px 50px #0009}
+.player-name-kicker{text-align:center;margin:0;color:#62d5ff;font-size:11px;font-weight:900;letter-spacing:.12em}
+.player-name-card h1{text-align:center;margin:3px 0 4px;color:#ffb30d;font-size:clamp(29px,8vw,46px);line-height:1;-webkit-text-stroke:1px #713500;text-shadow:0 3px 0 #2c1800}
+.player-name-copy{text-align:center;margin:0 0 16px;color:#d9e8ff;font-size:13px;font-weight:700}
+.player-name-label{display:block;text-align:center;color:#fff;font-weight:900;font-size:13px}
+.player-name-input-wrap{position:relative;margin-top:7px}
+.player-name-input-wrap input{width:100%;padding:15px 58px 15px 15px;border:3px solid #ffae16;border-radius:15px;background:#031638;color:#fff;font-size:18px;font-weight:900;outline:0;box-shadow:inset 0 3px 10px #0008}
+.player-name-input-wrap input:focus{border-color:#69ddff;box-shadow:0 0 0 3px #24c8ff44,inset 0 3px 10px #0008}
+.player-name-input-wrap span{position:absolute;right:13px;top:50%;transform:translateY(-50%);color:#9eb5de;font-weight:900;font-size:12px}
+.player-name-error{min-height:20px;margin:5px 0;color:#ffd0c6;text-align:center;font-size:12px;font-weight:900}
+.suggested-title{text-align:center;margin:3px 0 8px;color:#dce8ff;font-size:12px;font-weight:900}
+.player-suggestions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.player-suggestions button{padding:9px 5px;border:2px solid #ffae16;border-radius:999px;background:linear-gradient(#1261cf,#043b93);color:#fff;font-size:12px;font-weight:900;box-shadow:0 4px 0 #05245c}
+.player-suggestions button.active{background:linear-gradient(#ffac16,#ff6900);border-color:#ffe381}
+.player-preview-card{display:grid;grid-template-columns:72px 1fr;align-items:center;gap:12px;margin-top:15px;padding:12px;border:3px solid #ffae16;border-radius:18px;background:#031c58cc}
+.player-preview-avatar{position:relative;width:68px;height:68px;border:4px solid #ffb51b;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 50% 35%,#244f93,#051938 72%);font-size:33px;font-weight:1000}
+.player-preview-avatar b{position:absolute;right:-3px;top:-16px;color:#ffc324;font-size:28px;text-shadow:0 2px 0 #743b00}
+.player-preview-card small{display:block;color:#fff;font-weight:900}.player-preview-card strong{display:block;margin-top:4px;color:#ffc528;font-size:18px;line-height:1.05}.player-preview-card span,.player-preview-card em{display:block;margin-top:4px;color:#61d8ff;font-style:normal;font-weight:800;font-size:13px}.player-preview-card em{color:#d4e2ff}
+.player-start-button{width:100%;margin-top:16px;padding:15px 10px;border:4px solid #ffd76f;border-radius:16px;background:linear-gradient(#ff9c12,#e95b00);color:#fff;font-size:clamp(19px,5vw,28px);font-weight:1000;text-shadow:0 3px 0 #8b2800;box-shadow:0 6px 0 #7b3000,0 0 24px #ff8a0066}
+.player-cancel-button{width:100%;margin-top:10px;padding:11px;border:2px solid #ffffff55;border-radius:999px;background:#ffffff16;color:#fff;font-weight:900}
+.player-benefits{position:relative;z-index:3;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:18px auto 0;padding:11px 12px;width:min(100%,570px);border:2px solid #ffae16;border-radius:18px;background:#031b56dd;font-size:11px;font-weight:900;text-align:center}
+.player-benefits span{padding:7px 3px;border-radius:999px;background:#ffffff0e}
+.drawer-store{margin-top:13px!important;color:#a9c8ff}
+@media(max-width:430px){.player-name-scene{padding-inline:10px}.player-shark-art{left:-95px;top:225px;width:310px}.player-name-card{width:91%;margin-top:250px;padding-inline:14px}.player-adventure-logo strong{font-size:52px}.player-benefits{font-size:10px}}
+@media(min-width:700px){.player-name-scene{border-radius:28px;margin-block:20px;min-height:calc(100svh - 40px);box-shadow:0 25px 80px #000c}.player-name-card{margin-top:260px}.player-shark-art{left:-35px}}
+
+
+/* Evidencia fotográfica obligatoria */
+.evidence-dialog>form{padding-top:28px}
+.photo-evidence{
+  margin-top:16px;
+  padding:14px;
+  border:2px solid #d8dfeb;
+  border-radius:17px;
+  background:linear-gradient(180deg,#f8fbff,#edf5ff);
+}
+.photo-evidence-title{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.photo-evidence-title strong{color:#08245d;font-size:14px}
+.photo-evidence-title span{
+  flex:none;
+  padding:4px 8px;
+  border-radius:999px;
+  background:#e74431;
+  color:#fff;
+  font-size:9px;
+  font-weight:950;
+  letter-spacing:.06em;
+}
+.photo-evidence>p{margin:7px 0 11px!important;text-align:left!important;font-size:12px;line-height:1.35;color:#66738e!important}
+.photo-file-input{
+  position:absolute!important;
+  width:1px!important;
+  height:1px!important;
+  overflow:hidden!important;
+  clip:rect(0 0 0 0)!important;
+  clip-path:inset(50%)!important;
+  white-space:nowrap!important;
+}
+.photo-capture-button{
+  display:flex!important;
+  align-items:center;
+  justify-content:center;
+  width:100%;
+  min-height:48px;
+  margin-top:8px!important;
+  padding:12px;
+  border:2px solid #087edc;
+  border-radius:999px;
+  background:linear-gradient(#22b8ff,#0877db);
+  color:#fff;
+  font-weight:950!important;
+  font-size:14px!important;
+  text-align:center;
+  cursor:pointer;
+  box-shadow:0 4px 0 #0754a9;
+}
+.photo-capture-button:active{transform:translateY(2px);box-shadow:0 2px 0 #0754a9}
+.photo-preview-wrap{
+  position:relative;
+  margin-top:12px;
+  overflow:hidden;
+  border:3px solid #0a79d5;
+  border-radius:15px;
+  background:#061a4b;
+}
+.photo-preview-wrap img{
+  display:block;
+  width:100%;
+  max-height:260px;
+  object-fit:contain;
+  background:#03143f;
+}
+.photo-remove-button{
+  position:absolute;
+  right:8px;
+  bottom:8px;
+  border:1px solid #fff8;
+  border-radius:999px;
+  padding:7px 10px;
+  background:#001843dd;
+  color:#fff;
+  font-size:11px;
+  font-weight:900;
+}
+.photo-status{display:block;margin-top:9px;color:#b02c22;font-weight:850;text-align:center;line-height:1.3}
+.photo-status.ready{color:#16813b}
+.evidence-dialog .primary[disabled]{opacity:.58;cursor:wait}
+.mini-mission-medal{
+  width:74px;height:74px;margin:2px auto 9px;border-radius:50%;
+  display:grid;place-items:center;font-size:39px;
+  background:radial-gradient(circle at 35% 25%,#fff6aa,#ffc22b 42%,#e97800 78%);
+  border:5px solid #fff0a0;box-shadow:0 7px 0 #a64f00,0 0 24px #ff9a0066;
+}
+.bonus-mission-dialog h2{color:#08245d}
+.bonus-photo-evidence{background:linear-gradient(180deg,#fffaf2,#fff0d9);border-color:#f0c48f}
+.green-action{background:linear-gradient(#79dc1f,#36a300)!important;box-shadow:0 4px 0 #247700}

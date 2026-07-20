@@ -1,25 +1,44 @@
-# Reto Tiburón V3.2
+# Reto Tiburón V3.4 — evidencias obligatorias
 
-Corrección específica y limpia de la pantalla Match-3 **Reto superado**.
+## Cambios
 
-## Qué cambió
-La tarjeta ya no se construye con textos, monedas, tiburón y botones HTML
-independientes. Todo el diseño aprobado se muestra como una sola plantilla
-gráfica de 424 × 613.
+### Misión diaria
+- La evidencia ya no es opcional.
+- Se exige una fotografía antes de completar la misión y avanzar al siguiente día.
+- En Android se puede abrir la cámara con “Tomar foto o elegir imagen”.
+- La imagen se comprime y guarda localmente en IndexedDB.
 
-Únicamente se dibujan dinámicamente:
-- Movimientos restantes.
-- netocoins ganados.
-- Rango actual.
+### Acceso al Match‑3
+- Antes de abrir el reto de bonificación aparece una mini misión:
+  **Entrega una distinción neto**.
+- También requiere una fotografía obligatoria.
+- Una vez validada, desbloquea el Match‑3 correspondiente.
 
-Los botones **CONTINUAR** y **SALIR** son zonas táctiles transparentes
-situadas exactamente encima de los botones visibles.
+### Preparación para Google Sheets
+Cada evidencia guarda:
+- `localKey`
+- `photoUrl`
+- `syncStatus`
+- nombre, tipo y tamaño del archivo
+- fecha, misión y sucursal
 
-## Publicar en GitHub
+Mientras la app esté publicada únicamente en GitHub Pages, las fotos quedan
+guardadas en el dispositivo y `photoUrl` permanece vacío. Para generar una URL
+permanente se conectará después un servicio de subida —por ejemplo Google Apps
+Script + Google Drive— y esa URL se escribirá en Google Sheets.
+
+La integración futura puede utilizar:
+- `window.RetoEvidenceUploader(...)`
+- `window.RetoTiburon.getEvidenceQueue()`
+- `window.RetoTiburon.getEvidencePhoto(localKey)`
+- `window.RetoTiburon.setEvidencePhotoUrl(...)`
+
+## Publicación
+
 1. Descomprime el ZIP.
 2. Reemplaza todos los archivos del repositorio.
 3. Sube la carpeta `assets` completa.
-4. No mezcles V3.1 y V3.2.
+4. No mezcles V3.3 y V3.4.
 5. Abre:
 
-https://christiangh7788-afk.github.io/reto-tiburon/?v=32
+https://christiangh7788-afk.github.io/reto-tiburon/?v=34

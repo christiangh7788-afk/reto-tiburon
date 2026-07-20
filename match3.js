@@ -51,7 +51,7 @@ class Match3Game{
     document.getElementById('match3SuccessCard').hidden=false;
     document.getElementById('match3LoseCard').hidden=true;
     document.getElementById('match3Level').textContent=`BONO ${this.level}`;
-    document.getElementById('match3Rank').textContent=window.RetoTiburon?.getRank?.()||'Aprendiz Tiburón';
+    document.getElementById('match3Rank').textContent=`${window.RetoTiburon?.getPlayerName?.()||'Jugador'} · ${window.RetoTiburon?.getRank?.()||'Aprendiz Tiburón'}`;
     this.setMessage('Alinea 3 o más fichas. Toca dos fichas vecinas o desliza.');
     this.render(true);this.renderHud();
     if(!this.dialog.open)this.dialog.showModal();
@@ -255,7 +255,7 @@ class Match3Game{
     ctx.fillText(text,x,y);
     ctx.restore();
   }
-  renderWinResult({moves,reward,rank}){
+  renderWinResult({moves,reward,rank,playerName}){
     const canvas=this.resultCanvas;
     if(!canvas)return;
     const ctx=canvas.getContext("2d");
@@ -294,15 +294,13 @@ class Match3Game{
         "#5e0018"
       );
 
-      // Rango: se ajusta para evitar cortes.
-      const rankSize=this.fitCanvasFont(ctx,rank,160,17,12,"Georgia");
-      ctx.save();
-      ctx.textAlign="left";
-      ctx.textBaseline="top";
-      ctx.font=`700 ${rankSize}px Georgia`;
-      ctx.fillStyle="#ffe4c0";
-      ctx.fillText(rank,158,420);
-      ctx.restore();
+      // Nombre del jugador y rango dentro de la misma placa.
+      const safeName=playerName||'Jugador';
+      const nameSize=this.fitCanvasFont(ctx,safeName,160,15,11,"Georgia");
+      const rankSize=this.fitCanvasFont(ctx,rank,160,16,11,"Georgia");
+      ctx.save();ctx.textAlign="left";ctx.textBaseline="top";ctx.fillStyle="#ffcf50";
+      ctx.font=`700 ${nameSize}px Georgia`;ctx.fillText(safeName,158,411);
+      ctx.fillStyle="#ffe4c0";ctx.font=`700 ${rankSize}px Georgia`;ctx.fillText(rank,158,430);ctx.restore();
     };
     if(this.resultTemplate.complete)draw();
     else this.resultTemplate.onload=draw;
@@ -316,7 +314,8 @@ class Match3Game{
     this.renderWinResult({
       moves:this.moves,
       reward:result.reward??reward,
-      rank:result.rank||'Aprendiz Tiburón'
+      rank:result.rank||'Aprendiz Tiburón',
+      playerName:window.RetoTiburon?.getPlayerName?.()||'Jugador'
     });
     this.resultEl.hidden=false;
     window.RetoTiburon?.playSfx?.('success');
