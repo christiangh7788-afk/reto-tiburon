@@ -43,7 +43,7 @@ const RANKS=[
 {min:11,max:20,name:'Oficial Tiburón',icon:'★'},
 {min:21,max:29,name:'Comandante Tiburón',icon:'🏅'},
 {min:30,max:30,name:'Capitán Tiburón #1',icon:'👑'}];
-let audioUnlocked=false,pendingBonusLevel=0,lastCompletion=null,playerNameEditing=false;
+let audioUnlocked=false,pendingBonusLevel=0,lastCompletion=null,playerNameEditing=false,resumeStoreSetup=false;
 const audioPrefs={music:true,sfx:true};
 const sounds={};
 const soundPaths={click:'assets/audio/click.wav',coin:'assets/audio/coin.wav',success:'assets/audio/success.wav',error:'assets/audio/error.wav',rank:'assets/audio/rank-up.wav'};
@@ -63,6 +63,14 @@ function unlockAudio(){audioUnlocked=true;const p=$('backgroundMusic');p.volume=
 function toast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._timer);t._timer=setTimeout(()=>t.classList.remove('show'),2600)}
 function enterApp(){$('loginScreen').hidden=true;$('playerNameScreen').hidden=true;$('appShell').hidden=false;$('drawerPlayer').textContent=state.playerName||'Jugador';$('drawerRank').textContent=rankFor().name;$('drawerStore').textContent=state.storeName;$('drawerCode').textContent=`Sucursal ${state.storeCode}`;renderMain()}
 function initialState(demo){state.storeName=$('storeNameInput').value.trim()||'Tienda Demo';state.storeCode=$('storeCodeInput').value.trim()||'001';state.playerName='';state.demo=demo;state.evidence={};state.bonusAccess={};state.bonusPlayed={};if(demo){state.day=6;state.coins=1250;state.streak=6;state.sales=18900;state.completed=Array.from({length:30},(_,i)=>i<6)}else{state.day=0;state.coins=0;state.streak=0;state.sales=0;state.completed=Array(30).fill(false)}save();showPlayerNameScreen(false);unlockAudio()}
+function continueSavedStoreSetup(){
+ state.storeName=$('storeNameInput').value.trim()||state.storeName||'Tienda Demo';
+ state.storeCode=$('storeCodeInput').value.trim()||state.storeCode||'001';
+ resumeStoreSetup=false;
+ save();
+ showPlayerNameScreen(false);
+ unlockAudio();
+}
 
 function playerNameValue(){return $('playerNameInput').value.trim().replace(/\s+/g,' ')}
 function updatePlayerNamePreview(){
@@ -78,8 +86,10 @@ function showPlayerNameScreen(editing=false){
  $('loginScreen').hidden=true;
  $('appShell').hidden=true;
  $('playerNameScreen').hidden=false;
+ $('playerStoreName').textContent=state.storeName||'Tienda';
+ $('playerStoreCode').textContent=`Sucursal ${state.storeCode||'—'}`;
  $('playerNameInput').value=state.playerName||'';
- $('cancelPlayerNameButton').hidden=!editing;
+ $('cancelPlayerNameButton').textContent=editing?'Cancelar cambio':'Volver a la sucursal';
  $('confirmPlayerNameButton').textContent=editing?'GUARDAR NUEVO NOMBRE':'¡COMENZAR AVENTURA!';
  updatePlayerNamePreview();
  setTimeout(()=>$('playerNameInput').focus(),120);
@@ -466,11 +476,17 @@ window.RetoTiburon={
  }
 };
 
-$('newGameButton').onclick=()=>initialState(false);$('demoButton').onclick=()=>initialState(true);
+$('newGameButton').onclick=()=>resumeStoreSetup?continueSavedStoreSetup():initialState(false);$('demoButton').onclick=()=>{resumeStoreSetup=false;initialState(true)};
 $('playerNameInput').addEventListener('input',updatePlayerNamePreview);
 document.querySelectorAll('[data-player-name]').forEach(button=>button.onclick=()=>{$('playerNameInput').value=button.dataset.playerName;updatePlayerNamePreview()});
 $('confirmPlayerNameButton').onclick=confirmPlayerName;
-$('cancelPlayerNameButton').onclick=()=>{$('playerNameScreen').hidden=true;enterApp()};
+$('cancelPlayerNameButton').onclick=()=>{
+ $('playerNameScreen').hidden=true;
+ if(playerNameEditing){enterApp();return}
+ $('storeNameInput').value=state.storeName||'';
+ $('storeCodeInput').value=state.storeCode||'';
+ $('loginScreen').hidden=false;
+};
 $('menuButton').onclick=()=>openDrawer(true);$('changePlayerNameButton').onclick=()=>{openDrawer(false);showPlayerNameScreen(true)};$('closeDrawer').onclick=()=>openDrawer(false);$('drawerShade').onclick=()=>openDrawer(false);
 $('notificationButton').onclick=()=>{$('notificationPanel').hidden=!$('notificationPanel').hidden};
 $('validateButton').onclick=openValidation;$('cancelValidation').onclick=()=>{$('validationDialog').close();resetPhotoControl('mission')};$('validationForm').onsubmit=validateMission;
@@ -492,11 +508,27 @@ document.querySelectorAll('[data-category]').forEach(b=>b.onclick=()=>{const cat
 
 document.addEventListener('click',e=>{if(e.target.closest('button')){if(!audioUnlocked)unlockAudio();sfx('click')}},{capture:true});
 document.addEventListener('visibilitychange',()=>{if(document.hidden)$('backgroundMusic').pause();else if(audioUnlocked&&audioPrefs.music)$('backgroundMusic').play().catch(()=>{})});
-if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js?v=3.4').catch(()=>{}));
+if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js?v=3.5').catch(()=>{}));
 
 bindPhotoControl('mission');bindPhotoControl('bonus');
 initSounds();
 try{Object.assign(audioPrefs,JSON.parse(localStorage.getItem(AUDIO_KEY)||'{}'))}catch{}
 mainImage.onload=renderMain;
 const params=new URLSearchParams(location.search);
-if(load()){if(state.playerName)enterApp();else showPlayerNameScreen(false)}else if(params.get('demo')==='1'){state.storeName='Tienda Demo';state.storeCode='001';state.playerName='';state.demo=true;state.day=6;state.coins=1250;state.streak=6;state.sales=18900;state.completed=Array.from({length:30},(_,i)=>i<6);save();showPlayerNameScreen(false)}
+if(load()){
+ if(state.playerName)enterApp();
+ else{
+  resumeStoreSetup=true;
+  $('storeNameInput').value=state.storeName||'Tienda Demo';
+  $('storeCodeInput').value=state.storeCode||'001';
+  $('newGameButton').textContent='Continuar con esta sucursal';
+  $('loginScreen').hidden=false;
+  $('playerNameScreen').hidden=true;
+  $('appShell').hidden=true;
+ }
+}else if(params.get('demo')==='1'){
+ state.storeName='Tienda Demo';state.storeCode='001';state.playerName='';state.demo=true;
+ state.day=6;state.coins=1250;state.streak=6;state.sales=18900;
+ state.completed=Array.from({length:30},(_,i)=>i<6);save();
+ showPlayerNameScreen(false)
+}

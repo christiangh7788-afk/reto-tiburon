@@ -6,8 +6,8 @@
   <meta name="theme-color" content="#03194f">
   <title>Reto Tiburón</title>
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="stylesheet" href="styles.css?v=3.4">
-  <link rel="stylesheet" href="match3.css?v=3.4">
+  <link rel="stylesheet" href="styles.css?v=3.5">
+  <link rel="stylesheet" href="match3.css?v=3.5">
 </head>
 <body>
   <section id="loginScreen" class="login-screen">
@@ -32,12 +32,21 @@
         <p>La aventura hacia Capitán Tiburón #1</p>
       </header>
 
-      <img class="player-shark-art" src="assets/player-shark.png" alt="Tiburón neto">
+      <section class="player-store-confirmation">
+        <div class="player-shark-avatar">
+          <img src="assets/player-shark.png" alt="Tiburón neto">
+        </div>
+        <div>
+          <small>SUCURSAL CONFIRMADA</small>
+          <strong id="playerStoreName">Tienda Demo</strong>
+          <span id="playerStoreCode">Sucursal 001</span>
+        </div>
+      </section>
 
       <section class="player-name-card">
         <p class="player-name-kicker">PERSONALIZA TU AVENTURA</p>
         <h1>ELIGE TU NOMBRE</h1>
-        <p class="player-name-copy">Este será tu nombre en misiones, ascensos y retos de bonificación.</p>
+        <p class="player-name-copy">Este nombre aparecerá en misiones, ascensos y retos de bonificación.</p>
 
         <label class="player-name-label" for="playerNameInput">NOMBRE DEL JUGADOR</label>
         <div class="player-name-input-wrap">
@@ -65,7 +74,7 @@
         </section>
 
         <button id="confirmPlayerNameButton" type="button" class="player-start-button">¡COMENZAR AVENTURA!</button>
-        <button id="cancelPlayerNameButton" type="button" class="player-cancel-button" hidden>Cancelar cambio</button>
+        <button id="cancelPlayerNameButton" type="button" class="player-cancel-button">Volver a la sucursal</button>
       </section>
 
       <footer class="player-benefits">
@@ -247,7 +256,7 @@
 
   <div id="toast" class="toast" aria-live="polite"></div>
   <audio id="backgroundMusic" preload="auto" loop src="assets/audio/music-funk-de-ventas.mp3"></audio>
-  <script src="app.js?v=3.4"></script>
-  <script src="match3.js?v=3.4"></script>
+  <script src="app.js?v=3.5"></script>
+  <script src="match3.js?v=3.5"></script>
 </body>
 </html>

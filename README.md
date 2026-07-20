@@ -1,44 +1,37 @@
-# Reto Tiburón V3.4 — evidencias obligatorias
+# Reto Tiburón V3.5 — flujo de acceso y nombre corregido
 
-## Cambios
+## Flujo correcto
 
-### Misión diaria
-- La evidencia ya no es opcional.
-- Se exige una fotografía antes de completar la misión y avanzar al siguiente día.
-- En Android se puede abrir la cámara con “Tomar foto o elegir imagen”.
-- La imagen se comprime y guarda localmente en IndexedDB.
+1. El usuario escribe el nombre y número de la sucursal.
+2. Pulsa “Comenzar reto nuevo”.
+3. Aparece la pantalla compacta “Elige tu nombre”.
+4. La pantalla muestra la sucursal confirmada.
+5. El jugador elige su nombre y comienza la aventura.
 
-### Acceso al Match‑3
-- Antes de abrir el reto de bonificación aparece una mini misión:
-  **Entrega una distinción neto**.
-- También requiere una fotografía obligatoria.
-- Una vez validada, desbloquea el Match‑3 correspondiente.
+## Actualizaciones desde versiones anteriores
 
-### Preparación para Google Sheets
-Cada evidencia guarda:
-- `localKey`
-- `photoUrl`
-- `syncStatus`
-- nombre, tipo y tamaño del archivo
-- fecha, misión y sucursal
+Si el celular ya tenía una sucursal guardada, pero todavía no tenía nombre de
+jugador, la aplicación ya no abre directamente la selección del nombre.
+Primero vuelve a mostrar la sucursal guardada y el botón:
 
-Mientras la app esté publicada únicamente en GitHub Pages, las fotos quedan
-guardadas en el dispositivo y `photoUrl` permanece vacío. Para generar una URL
-permanente se conectará después un servicio de subida —por ejemplo Google Apps
-Script + Google Drive— y esa URL se escribirá en Google Sheets.
+**Continuar con esta sucursal**
 
-La integración futura puede utilizar:
-- `window.RetoEvidenceUploader(...)`
-- `window.RetoTiburon.getEvidenceQueue()`
-- `window.RetoTiburon.getEvidencePhoto(localKey)`
-- `window.RetoTiburon.setEvidencePhotoUrl(...)`
+Esto evita que la pantalla parezca aparecer fuera de orden.
 
-## Publicación
+## Diseño
+
+- Se eliminó el lienzo vertical vacío.
+- Se eliminó el tiburón gigante sobrepuesto.
+- La pantalla se ajusta a su contenido.
+- En pantallas bajas permite desplazamiento vertical sin deformarse.
+- La sucursal aparece confirmada antes de elegir el nombre.
+- “Volver a la sucursal” regresa al formulario anterior.
+
+## Publicar
 
 1. Descomprime el ZIP.
 2. Reemplaza todos los archivos del repositorio.
-3. Sube la carpeta `assets` completa.
-4. No mezcles V3.3 y V3.4.
-5. Abre:
+3. Sube la carpeta assets completa.
+4. Abre:
 
-https://christiangh7788-afk.github.io/reto-tiburon/?v=34
+https://christiangh7788-afk.github.io/reto-tiburon/?v=35
