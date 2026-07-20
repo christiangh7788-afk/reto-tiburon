@@ -1,30 +1,38 @@
-# Reto Tiburón V3.1 — corrección visual limpia
+# Reto Tiburón V5.0 — base visual final provisional
 
-Esta versión corrige los elementos sobrepuestos reportados en:
+Esta entrega congela únicamente las tres pantallas aprobadas:
 
-- Tarjeta de misión y recompensa.
-- Avance del mes.
-- Próximo reto.
-- Ranking de tiendas.
-- Pantalla “Reto superado” del Match-3.
+1. Registro de sucursal — “El Rey de la Aventura”.
+2. Elección del nombre — “La aventura de Tiburón Max”.
+3. Pantalla principal — diseño oficial de misiones diarias.
 
-## Cambios principales
+## Qué es funcional
 
-- Las tarjetas dinámicas se redibujan completas y opacas sobre la plantilla, por lo que no quedan textos o números anteriores debajo.
-- La pantalla “Reto superado” fue reconstruida como una interfaz limpia inspirada en el diseño aprobado: marco dorado, estrella, confeti, tiburón, recompensa, rango y botones.
-- Se conserva el nombre `netocoins`, siempre con n minúscula.
-- Se conserva la música Funk de ventas.
-- Se mantienen las 30 misiones, rangos, racha, ranking, guardado local y Match-3.
-- El progreso anterior usa la misma clave de almacenamiento y no se borra.
+- Nombre de tienda.
+- Número de sucursal.
+- Botones Comenzar reto nuevo y Modo demostración.
+- Nombre de jugador entre 3 y 16 caracteres.
+- Cuatro nombres sugeridos.
+- Vista previa del nombre.
+- Navegación entre las tres pantallas.
+- Guardado local de sucursal y jugador.
+- Menú para cambiar nombre o sucursal.
+- Instalación como PWA desde GitHub Pages.
 
-## Publicación en GitHub Pages
+## Alcance congelado
+
+Para evitar volver a introducir errores visuales, esta versión no reincorpora
+todavía las ventanas de validación, evidencias, Match-3 ni celebraciones.
+El botón VALIDAR MISIÓN muestra una nota de alcance.
+
+Estas funciones se integrarán nuevamente solo después de aprobar la base
+visual de estas tres pantallas.
+
+## Publicar
 
 1. Descomprime el ZIP.
 2. Reemplaza todos los archivos del repositorio.
 3. Sube la carpeta `assets` completa.
-4. Haz **Commit changes**.
-5. Abre:
+4. Abre:
 
-   `https://christiangh7788-afk.github.io/reto-tiburon/?v=31`
-
-No mezcles archivos de V3.0 con V3.1.
+https://christiangh7788-afk.github.io/reto-tiburon/?v=50

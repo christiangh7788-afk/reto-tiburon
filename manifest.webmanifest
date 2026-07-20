@@ -1,10 +1,10 @@
 {
-  "name": "Reto Tiburón",
+  "name": "Reto Tiburón — Base visual aprobada",
   "short_name": "Reto Tiburón",
-  "start_url": "./?v=31",
+  "start_url": "./?v=50",
   "display": "standalone",
-  "background_color": "#03194f",
-  "theme_color": "#03194f",
+  "background_color": "#020f34",
+  "theme_color": "#031a52",
   "icons": [
     {
       "src": "assets/icon.svg",
