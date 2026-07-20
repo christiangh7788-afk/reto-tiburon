@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <meta name="theme-color" content="#03194f">
+  <title>Reto Tiburón V7.0 Demo Completa</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="styles.css?v=70">
+  <link rel="stylesheet" href="match3.css?v=70">
+</head>
+<body>
+  <!-- 1. REGISTRO DE SUCURSAL OFICIAL -->
+  <section id="storeScreen" class="screen visual-screen" aria-label="Registro de sucursal">
+    <div class="artboard artboard-register">
+      <img src="assets/registro-oficial.png" alt="Reto Tiburón: El Rey de la Aventura">
+      <input id="storeName" class="overlay-input store-name" maxlength="40"
+             value="Tienda Demo" autocomplete="organization" aria-label="Nombre de tienda">
+      <input id="storeCode" class="overlay-input store-code" maxlength="10"
+             value="001" inputmode="numeric" aria-label="Número de sucursal">
+      <button id="startButton" class="hotspot start-hotspot" type="button" aria-label="Comenzar reto nuevo"></button>
+      <button id="demoButton" class="hotspot demo-hotspot" type="button" aria-label="Entrar en modo demostración"></button>
+    </div>
+  </section>
+
+  <!-- 2. ELECCIÓN DE NOMBRE OFICIAL -->
+  <section id="nameScreen" class="screen visual-screen" hidden aria-label="Elegir nombre del jugador">
+    <div class="artboard artboard-name">
+      <img src="assets/nombre-oficial-limpio.png" alt="Elige tu nombre para la aventura">
+      <input id="playerName" class="overlay-input player-name" minlength="3" maxlength="16"
+             autocomplete="nickname" placeholder="Escribe tu nombre aquí…" aria-label="Nombre de jugador">
+      <span id="counter" class="name-counter">0/16</span>
+      <span id="playerPreviewInitial" hidden>?</span>
+      <p id="playerNameError" class="player-name-error" aria-live="polite"></p>
+
+      <button class="hotspot suggestion suggestion-1" data-player-name="Tiburón Max" aria-label="Tiburón Max"></button>
+      <button class="hotspot suggestion suggestion-2" data-player-name="Capitán Azul" aria-label="Capitán Azul"></button>
+      <button class="hotspot suggestion suggestion-3" data-player-name="Rey del Mar" aria-label="Rey del Mar"></button>
+      <button class="hotspot suggestion suggestion-4" data-player-name="Mordida Veloz" aria-label="Mordida Veloz"></button>
+
+      <div class="preview-patch">
+        <strong id="previewName">Tu nombre aparecerá aquí</strong>
+        <span>Aprendiz Tiburón</span>
+        <small>Misión 1</small>
+      </div>
+
+      <button id="adventureButton" class="hotspot adventure-hotspot" type="button" aria-label="Comenzar aventura"></button>
+      <button id="backStoreButton" class="back-hotspot" type="button" aria-label="Volver a sucursal"></button>
+    </div>
+  </section>
+
+  <!-- 3. PANTALLA PRINCIPAL OFICIAL -->
+  <main id="mainScreen" hidden>
+    <div class="viewport">
+      <section class="game-stage" aria-label="Panel principal de Reto Tiburón">
+        <canvas id="mainCanvas" width="900" height="1600"></canvas>
+        <div class="live-version-badge">V7.0 DEMO COMPLETA</div>
+        <button id="menuButton" class="hit menu-hit" type="button" aria-label="Abrir menú"></button>
+        <button id="notificationButton" class="hit notice-hit" type="button" aria-label="Ver avisos"></button>
+        <button id="rankingToggle" class="hit ranking-hit" type="button" aria-label="Ver ranking completo"></button>
+        <button id="validateButton" class="hit validate-hit" type="button" aria-label="Validar misión"></button>
+        <button class="hit chip-hit chip-1" data-category="Recargas" type="button" aria-label="Recargas"></button>
+        <button class="hit chip-hit chip-2" data-category="Producto adoptado" type="button" aria-label="Producto adoptado"></button>
+        <button class="hit chip-hit chip-3" data-category="Cerveza" type="button" aria-label="Cerveza"></button>
+        <button class="hit chip-hit chip-4" data-category="Cañonetos" type="button" aria-label="Cañonetos"></button>
+      </section>
+    </div>
+    <button id="audioUnlockBanner" class="audio-banner" type="button">🔊 Toca para activar música y sonidos</button>
+  </main>
+
+  <!-- MENÚ -->
+  <aside id="drawer" class="drawer" aria-hidden="true">
+    <button id="closeDrawer" class="drawer-close" type="button">×</button>
+    <h2>Reto Tiburón</h2>
+    <div class="build-badge">V7.0 · DEMO COMPLETA</div>
+    <p id="drawerPlayer">Jugador</p>
+    <small id="drawerRank">Aprendiz Tiburón</small>
+    <p id="drawerStore" class="drawer-store">Tienda</p>
+    <small id="drawerCode">Sucursal 001</small>
+    <button id="changePlayerNameButton" type="button">✏️ Cambiar nombre del jugador</button>
+    <button id="calendarButton" type="button">📅 Misiones del mes</button>
+    <button id="bonusGameDrawerButton" type="button">🎮 Reto de bonificación</button>
+    <button id="directMatch3Button" type="button">🧩 Jugar Match‑3 ahora</button>
+    <button id="directMusicButton" type="button">▶ Probar Funk de ventas</button>
+    <button id="featureCenterButton" type="button">🧪 Centro de pruebas</button>
+    <button id="musicToggle" type="button">🎵 Música <b>Activada</b></button>
+    <button id="effectsToggle" type="button">🔔 Efectos <b>Activados</b></button>
+    <button id="resetButton" type="button">↺ Reiniciar progreso</button>
+    <button id="logoutButton" type="button">Salir de la sucursal</button>
+  </aside>
+  <div id="drawerShade" class="drawer-shade"></div>
+
+  <div id="notificationPanel" class="notification-panel" hidden>
+    <strong>Avisos</strong>
+    <span>• La evidencia fotográfica es obligatoria.</span>
+    <span>• Cumple la mini misión para desbloquear Match‑3.</span>
+    <span>• La música seleccionada es Funk de ventas.</span>
+  </div>
+
+  <!-- CENTRO DE PRUEBAS V6.1 -->
+  <dialog id="featureDialog" class="clean-dialog feature-dialog">
+    <section>
+      <button id="closeFeatureDialog" type="button" class="close">×</button>
+      <p class="eyebrow">VERSIÓN 7.0 DEMO COMPLETA</p>
+      <h2>Centro de pruebas</h2>
+      <p>Comprueba inmediatamente que la música, los efectos y el Match‑3 están incluidos. Estas pruebas no alteran tus misiones ni tus netocoins.</p>
+
+      <div class="feature-checks">
+        <div><span>🎵</span><strong>Música Funk de ventas</strong><small>Archivo integrado en assets/audio</small></div>
+        <div><span>🔔</span><strong>Efectos del juego</strong><small>Botones, monedas, éxito y ascenso</small></div>
+        <div><span>🎮</span><strong>Match‑3 9 × 9</strong><small>Objetivos, movimientos y potenciadores</small></div>
+      </div>
+
+      <button id="testMusicButton" class="primary" type="button">▶ Probar música de fondo</button>
+      <button id="testEffectsButton" class="secondary feature-blue" type="button">🔔 Probar efecto de éxito</button>
+      <button id="testMatch3Button" class="secondary feature-green" type="button">🎮 Abrir Match‑3 ahora</button>
+      <button id="refreshAppButton" class="secondary feature-refresh" type="button">↻ Forzar actualización de la app</button>
+      <small class="feature-note">El acceso normal al Match‑3 continúa apareciendo después de validar una misión y completar la mini misión con fotografía.</small>
+    </section>
+  </dialog>
+
+  <!-- VALIDACIÓN DE MISIÓN -->
+  <dialog id="validationDialog" class="clean-dialog evidence-dialog">
+    <form id="validationForm" method="dialog">
+      <button id="cancelValidation" type="button" class="close">×</button>
+      <p class="eyebrow">VALIDAR MISIÓN</p>
+      <h2 id="validationTitle">Resultado del día</h2>
+      <p id="validationHelp">Captura el resultado alcanzado.</p>
+
+      <label>Resultado
+        <input id="resultInput" type="number" min="0" step="1" inputmode="decimal" required>
+      </label>
+
+      <section class="photo-evidence">
+        <div class="photo-evidence-title">
+          <strong>Evidencia fotográfica</strong>
+          <span>OBLIGATORIA</span>
+        </div>
+        <p>Toma una foto que compruebe el cumplimiento. Sin evidencia no se desbloquea la siguiente misión.</p>
+        <input id="missionEvidencePhoto" class="photo-file-input" type="file" accept="image/*" capture="environment">
+        <label for="missionEvidencePhoto" class="photo-capture-button">📷 Tomar foto o elegir imagen</label>
+        <div id="missionEvidencePreviewWrap" class="photo-preview-wrap" hidden>
+          <img id="missionEvidencePreview" alt="Vista previa de evidencia">
+          <button id="removeMissionEvidence" type="button" class="photo-remove-button">Cambiar foto</button>
+        </div>
+        <small id="missionEvidenceStatus" class="photo-status">Debes agregar una fotografía para continuar.</small>
+      </section>
+
+      <button id="validationSubmitButton" class="primary" type="submit">Comprobar misión</button>
+    </form>
+  </dialog>
+
+  <!-- RANKING Y CALENDARIO -->
+  <dialog id="rankingDialog" class="clean-dialog">
+    <section>
+      <button id="closeRanking" type="button" class="close">×</button>
+      <p class="eyebrow">RANKING COMPLETO</p>
+      <h2>Tabla general</h2>
+      <div id="rankingFullList" class="list"></div>
+    </section>
+  </dialog>
+
+  <dialog id="calendarDialog" class="clean-dialog">
+    <section>
+      <button id="closeCalendar" type="button" class="close">×</button>
+      <p class="eyebrow">30 MISIONES</p>
+      <h2>Calendario mensual</h2>
+      <div id="missionCalendar" class="list"></div>
+    </section>
+  </dialog>
+
+  <!-- CELEBRACIÓN DE MISIÓN -->
+  <section id="completionOverlay" class="completion-overlay" hidden>
+    <div class="completion-stage">
+      <canvas id="completionCanvas" width="1024" height="1536"></canvas>
+      <button id="closeCompletion" class="hit completion-close-hit" type="button" aria-label="Cerrar"></button>
+      <button id="continueCompletion" class="hit completion-continue-hit" type="button" aria-label="Continuar"></button>
+    </div>
+  </section>
+
+  <!-- ELECCIÓN Y MINI MISIÓN DE MATCH-3 -->
+  <dialog id="bonusChoiceDialog" class="clean-dialog bonus-choice">
+    <section>
+      <p class="eyebrow">RETO DESBLOQUEADO</p>
+      <h2>¿Quieres jugar la bonificación?</h2>
+      <p>La misión de ventas ya quedó guardada. El Match‑3 entrega netocoins adicionales.</p>
+      <button id="playBonusButton" class="primary" type="button">🎮 Jugar reto de bonificación</button>
+      <button id="skipBonusButton" class="secondary" type="button">Continuar sin jugar</button>
+    </section>
+  </dialog>
+
+  <dialog id="bonusMissionDialog" class="clean-dialog evidence-dialog bonus-mission-dialog">
+    <form id="bonusMissionForm" method="dialog">
+      <button id="cancelBonusMission" type="button" class="close">×</button>
+      <p class="eyebrow">MINI MISIÓN DE ACCESO</p>
+      <div class="mini-mission-medal">🏅</div>
+      <h2>Entrega una distinción neto</h2>
+      <p id="bonusMissionHelp">Reconoce a un colaborador y toma una foto como evidencia para desbloquear el Match‑3.</p>
+
+      <section class="photo-evidence bonus-photo-evidence">
+        <div class="photo-evidence-title">
+          <strong>Evidencia fotográfica</strong>
+          <span>OBLIGATORIA</span>
+        </div>
+        <input id="bonusEvidencePhoto" class="photo-file-input" type="file" accept="image/*" capture="environment">
+        <label for="bonusEvidencePhoto" class="photo-capture-button">📷 Tomar foto de la distinción</label>
+        <div id="bonusEvidencePreviewWrap" class="photo-preview-wrap" hidden>
+          <img id="bonusEvidencePreview" alt="Vista previa de la mini misión">
+          <button id="removeBonusEvidence" type="button" class="photo-remove-button">Cambiar foto</button>
+        </div>
+        <small id="bonusEvidenceStatus" class="photo-status">La fotografía es necesaria para abrir el reto de bonificación.</small>
+      </section>
+
+      <button id="bonusMissionSubmitButton" class="primary green-action" type="submit">Validar evidencia y jugar</button>
+    </form>
+  </dialog>
+
+  <!-- MATCH-3 -->
+  <dialog class="match3-dialog" id="match3Dialog">
+    <section class="match3-shell">
+      <header class="match3-top">
+        <button class="match3-back" id="match3Close" type="button" aria-label="Cerrar Match-3">←</button>
+        <div class="match3-title">
+          <small>RETO DE BONIFICACIÓN</small>
+          <strong>Reto Tiburón<span>🛒</span></strong>
+        </div>
+        <button class="match3-sound" type="button" aria-label="Activar o silenciar música">🎵</button>
+      </header>
+
+      <section class="match3-hud">
+        <div class="match3-metric"><small>Nivel</small><strong id="match3Level">BONO 1</strong></div>
+        <div class="match3-metric"><small>Movimientos</small><strong id="match3Moves">25</strong></div>
+        <div class="match3-metric bonus"><small>Bono estimado</small><strong id="match3Bonus">145 nc</strong></div>
+      </section>
+
+      <div class="match3-rank">Rango: <strong id="match3Rank">Aprendiz Tiburón</strong></div>
+      <section class="match3-objectives" id="match3Objectives"></section>
+      <div class="match3-board-wrap">
+        <div class="match3-board" id="match3Board" role="grid" aria-label="Tablero Match-3 de 9 por 9"></div>
+      </div>
+      <div class="match3-message" id="match3Message">Alinea 3 o más fichas.</div>
+      <div class="match3-legend">
+        <span>4 = 🚀 cohete</span><span>5 = 🌈 bola</span><span>L/T = 💣 bomba</span>
+      </div>
+      <div class="match3-score-line">Puntuación: <strong id="match3Score">0</strong></div>
+
+      <section class="match3-result" id="match3Result" hidden>
+        <div class="match3-success-card" id="match3SuccessCard">
+          <canvas id="match3ResultCanvas" width="424" height="613" aria-label="Reto superado"></canvas>
+          <button id="match3ResultContinue" class="match3-result-hit match3-result-continue-hit" type="button" aria-label="Continuar"></button>
+          <button id="match3Exit" class="match3-result-hit match3-result-exit-hit" type="button" aria-label="Salir"></button>
+        </div>
+        <div class="match3-lose-card" id="match3LoseCard" hidden>
+          <div class="match3-result-star">✦</div>
+          <h2 id="match3LoseTitle">Sin movimientos</h2>
+          <p id="match3LoseText">Estuviste cerca. Puedes intentarlo otra vez sin perder tu misión diaria.</p>
+          <div class="match3-result-actions">
+            <button class="match3-primary" id="match3Retry" type="button">Volver a intentar</button>
+            <button class="match3-secondary" id="match3LoseExit" type="button">Salir</button>
+          </div>
+        </div>
+      </section>
+    </section>
+  </dialog>
+
+  <div id="toast" class="toast" aria-live="polite"></div>
+  <audio id="backgroundMusic" preload="auto" loop src="assets/audio/music-funk-de-ventas.mp3"></audio>
+
+  <script src="app.js?v=70"></script>
+  <script src="match3.js?v=70"></script>
+</body>
+</html>

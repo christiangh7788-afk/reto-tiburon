@@ -1,0 +1,21 @@
+RETO TIBURÓN V7.0 — DEMO COMPLETA SIN CACHÉ
+
+ABRIR EXACTAMENTE ESTA DIRECCIÓN:
+https://christiangh7788-afk.github.io/reto-tiburon/demo-completa.html?v=70
+
+AL ENTRAR EN MODO DEMOSTRACIÓN:
+1. Se abre el menú completo.
+2. Debe verse V7.0 · DEMO COMPLETA.
+3. Pulsa Jugar Match-3 ahora.
+4. Pulsa Probar Funk de ventas.
+
+VERIFICACIONES:
+- URL nueva demo-completa.html: OK
+- Marca V7 visible: OK
+- Botón directo Match-3: OK
+- Botón directo música: OK
+- Diálogo Match-3: OK
+- Tablero Match-3: OK
+- Motor Match-3: OK
+- Música Funk: OK
+- Sin service worker: OK

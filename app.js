@@ -95,7 +95,10 @@ function initialState(demo){
   state.day=6;state.coins=1250;state.streak=6;state.sales=18900;
   state.completed=Array.from({length:30},(_,i)=>i<6);
   save();enterApp();unlockAudio();
-  setTimeout(()=>{if(!$('featureDialog').open)$('featureDialog').showModal()},450);
+  setTimeout(()=>{
+   openDrawer(true);
+   toast('V7.0 Demo Completa: menú, sonidos y Match‑3 disponibles.');
+  },500);
   return;
  }
  state.playerName='';state.day=0;state.coins=0;state.streak=0;state.sales=0;
@@ -486,6 +489,29 @@ async function validateBonusMission(ev){
 }
 
 
+
+function openDirectMatch3(){
+ openDrawer(false);
+ if(!window.RetoMatch3){toast('El Match‑3 todavía está cargando.');return}
+ match3TestMode=true;
+ window.RetoMatch3.start({
+  level:Math.max(1,Math.min(30,state.day+1)),
+  onFinish:()=>renderMain()
+ })
+}
+function playDirectMusic(){
+ openDrawer(false);
+ audioPrefs.music=true;
+ localStorage.setItem(AUDIO_KEY,JSON.stringify(audioPrefs));
+ unlockAudio();
+ const player=$('backgroundMusic');
+ player.currentTime=0;
+ player.volume=.45;
+ player.play().then(()=>toast('Reproduciendo Funk de ventas.')).catch(()=>{
+  toast('Pulsa nuevamente para permitir el audio.')
+ })
+}
+
 function openFeatureCenter(){
  openDrawer(false);
  if(!$('featureDialog').open)$('featureDialog').showModal()
@@ -529,7 +555,8 @@ async function forceAppRefresh(){
   }
  }catch(error){console.warn(error)}
  const url=new URL(location.href);
- url.searchParams.set('v','61');
+ url.pathname=url.pathname.replace(/[^/]*$/,'demo-completa.html');
+ url.searchParams.set('v','70');
  url.searchParams.set('fresh',Date.now().toString());
  location.replace(url.toString())
 }
@@ -578,6 +605,8 @@ $('validateButton').onclick=openValidation;$('cancelValidation').onclick=()=>{$(
 $('rankingToggle').onclick=()=>{renderRanking();$('rankingDialog').showModal()};$('closeRanking').onclick=()=>$('rankingDialog').close();
 $('calendarButton').onclick=()=>{openDrawer(false);buildCalendar();$('calendarDialog').showModal()};$('closeCalendar').onclick=()=>$('calendarDialog').close();
 $('bonusGameDrawerButton').onclick=()=>{openDrawer(false);requestBonusAccess()};
+$('directMatch3Button').onclick=openDirectMatch3;
+$('directMusicButton').onclick=playDirectMusic;
 $('featureCenterButton').onclick=openFeatureCenter;
 $('closeFeatureDialog').onclick=()=>$('featureDialog').close();
 $('testMusicButton').onclick=testMusic;
@@ -599,7 +628,7 @@ document.querySelectorAll('[data-category]').forEach(b=>b.onclick=()=>{const cat
 
 document.addEventListener('click',e=>{if(e.target.closest('button')){if(!audioUnlocked)unlockAudio();sfx('click')}},{capture:true});
 document.addEventListener('visibilitychange',()=>{if(document.hidden)$('backgroundMusic').pause();else if(audioUnlocked&&audioPrefs.music)$('backgroundMusic').play().catch(()=>{})});
-if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js?v=61').catch(()=>{}));
+/* V7.0 funciona sin service worker para evitar caché de versiones anteriores. */
 
 bindPhotoControl('mission');bindPhotoControl('bonus');
 initSounds();
