@@ -1,10 +1,10 @@
 {
-  "name": "Reto Tiburón — Base visual aprobada",
+  "name": "Reto Tiburón — Aventura de ventas",
   "short_name": "Reto Tiburón",
-  "start_url": "./?v=50",
+  "start_url": "./?v=60",
   "display": "standalone",
   "background_color": "#020f34",
-  "theme_color": "#031a52",
+  "theme_color": "#03194f",
   "icons": [
     {
       "src": "assets/icon.svg",

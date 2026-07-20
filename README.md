@@ -1,38 +1,36 @@
-# Reto Tiburón V5.0 — base visual final provisional
+# Reto Tiburón V6.0 — versión completa
 
-Esta entrega congela únicamente las tres pantallas aprobadas:
+Esta versión conserva como base las tres pantallas visuales aprobadas:
 
-1. Registro de sucursal — “El Rey de la Aventura”.
-2. Elección del nombre — “La aventura de Tiburón Max”.
-3. Pantalla principal — diseño oficial de misiones diarias.
+1. Registro de sucursal — El Rey de la Aventura.
+2. Elección de nombre — La aventura de Tiburón Max.
+3. Panel principal — Misiones diarias de venta.
 
-## Qué es funcional
+## Funciones integradas
 
-- Nombre de tienda.
-- Número de sucursal.
-- Botones Comenzar reto nuevo y Modo demostración.
-- Nombre de jugador entre 3 y 16 caracteres.
-- Cuatro nombres sugeridos.
-- Vista previa del nombre.
-- Navegación entre las tres pantallas.
-- Guardado local de sucursal y jugador.
-- Menú para cambiar nombre o sucursal.
-- Instalación como PWA desde GitHub Pages.
+- 30 misiones de ventas.
+- netocoins y racha diaria.
+- Cinco rangos, hasta Capitán Tiburón #1.
+- Ranking de sucursales.
+- Música Funk de ventas y efectos.
+- Evidencia fotográfica obligatoria para cada misión.
+- Fotografías comprimidas y guardadas localmente en IndexedDB.
+- Campo `photoUrl` preparado para Google Drive/Sheets.
+- Celebración al cumplir una misión.
+- Mini misión “Entrega una distinción neto”.
+- Evidencia obligatoria para desbloquear Match‑3.
+- Tablero Match‑3 de 9 × 9.
+- Cohetes, bombas, bola de color y cascadas.
+- Bono de netocoins por superar Match‑3.
+- PWA instalable y funcionamiento sin conexión.
 
-## Alcance congelado
-
-Para evitar volver a introducir errores visuales, esta versión no reincorpora
-todavía las ventanas de validación, evidencias, Match-3 ni celebraciones.
-El botón VALIDAR MISIÓN muestra una nota de alcance.
-
-Estas funciones se integrarán nuevamente solo después de aprobar la base
-visual de estas tres pantallas.
-
-## Publicar
+## Publicar en GitHub
 
 1. Descomprime el ZIP.
-2. Reemplaza todos los archivos del repositorio.
+2. Elimina o reemplaza todos los archivos actuales.
 3. Sube la carpeta `assets` completa.
 4. Abre:
 
-https://christiangh7788-afk.github.io/reto-tiburon/?v=50
+https://christiangh7788-afk.github.io/reto-tiburon/?v=60
+
+No mezcles archivos de V5.x o V3.x con esta versión.

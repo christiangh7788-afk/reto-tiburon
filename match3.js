@@ -22,6 +22,9 @@ class Match3Game{
     this.objectivesEl=document.getElementById('match3Objectives');
     this.messageEl=document.getElementById('match3Message');
     this.resultEl=document.getElementById('match3Result');
+    this.resultCanvas=document.getElementById('match3ResultCanvas');
+    this.resultTemplate=new Image();
+    this.resultTemplate.src='assets/match3-result-template.png';
     this.board=[];this.selected=null;this.busy=false;this.moves=0;this.level=1;this.score=0;this.objectives=[];this.createdPowerups=0;this.activated={rocket:0,bomb:0,color:0};this.pointerStart=null;this.onFinish=null;
     this.bind();
   }
@@ -48,7 +51,7 @@ class Match3Game{
     document.getElementById('match3SuccessCard').hidden=false;
     document.getElementById('match3LoseCard').hidden=true;
     document.getElementById('match3Level').textContent=`BONO ${this.level}`;
-    document.getElementById('match3Rank').textContent=window.RetoTiburon?.getRank?.()||'Aprendiz Tiburón';
+    document.getElementById('match3Rank').textContent=`${window.RetoTiburon?.getPlayerName?.()||'Jugador'} · ${window.RetoTiburon?.getRank?.()||'Aprendiz Tiburón'}`;
     this.setMessage('Alinea 3 o más fichas. Toca dos fichas vecinas o desliza.');
     this.render(true);this.renderHud();
     if(!this.dialog.open)this.dialog.showModal();
@@ -229,15 +232,91 @@ class Match3Game{
     }
     this.render();await sleep(260);
   }
+  fitCanvasFont(ctx,text,maxWidth,startSize,minSize=12,fontFamily="Georgia"){
+    let size=startSize;
+    while(size>minSize){
+      ctx.font=`700 ${size}px ${fontFamily}`;
+      if(ctx.measureText(text).width<=maxWidth)break;
+      size--;
+    }
+    return size;
+  }
+  drawResultCentered(ctx,text,x,y,font,fill,strokeWidth=0,strokeFill="transparent"){
+    ctx.save();
+    ctx.textAlign="center";
+    ctx.textBaseline="top";
+    ctx.font=font;
+    ctx.fillStyle=fill;
+    if(strokeWidth){
+      ctx.strokeStyle=strokeFill;
+      ctx.lineWidth=strokeWidth;
+      ctx.strokeText(text,x,y);
+    }
+    ctx.fillText(text,x,y);
+    ctx.restore();
+  }
+  renderWinResult({moves,reward,rank,playerName}){
+    const canvas=this.resultCanvas;
+    if(!canvas)return;
+    const ctx=canvas.getContext("2d");
+    const draw=()=>{
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      ctx.drawImage(this.resultTemplate,0,0,canvas.width,canvas.height);
+
+      // Objetivo: solo cambia el número de movimientos.
+      this.drawResultCentered(
+        ctx,
+        `con ${moves} movimientos`,
+        205,235,
+        "700 15px Georgia",
+        "#fff3d1"
+      );
+
+      // Recompensa: tamaño adaptable para 2, 3 o 4 cifras.
+      const rewardText=`+${reward}`;
+      const rewardSize=this.fitCanvasFont(ctx,rewardText,165,54,38,"Georgia");
+      this.drawResultCentered(
+        ctx,
+        rewardText,
+        190,289,
+        `700 ${rewardSize}px Georgia`,
+        "#ffe36a",
+        2,
+        "#7a2600"
+      );
+      this.drawResultCentered(
+        ctx,
+        "netocoins",
+        190,351,
+        "700 23px Georgia",
+        "#fff0c7",
+        1,
+        "#5e0018"
+      );
+
+      // Nombre del jugador y rango dentro de la misma placa.
+      const safeName=playerName||'Jugador';
+      const nameSize=this.fitCanvasFont(ctx,safeName,160,15,11,"Georgia");
+      const rankSize=this.fitCanvasFont(ctx,rank,160,16,11,"Georgia");
+      ctx.save();ctx.textAlign="left";ctx.textBaseline="top";ctx.fillStyle="#ffcf50";
+      ctx.font=`700 ${nameSize}px Georgia`;ctx.fillText(safeName,158,411);
+      ctx.fillStyle="#ffe4c0";ctx.font=`700 ${rankSize}px Georgia`;ctx.fillText(rank,158,430);ctx.restore();
+    };
+    if(this.resultTemplate.complete)draw();
+    else this.resultTemplate.onload=draw;
+  }
   win(){
     this.busy=true;
     const reward=this.calculateReward();
     const result=window.RetoTiburon?.addBonusCoins?.({level:this.level,reward,movesLeft:this.moves,score:this.score})||{reward,rank:'Aprendiz Tiburón'};
     document.getElementById('match3SuccessCard').hidden=false;
     document.getElementById('match3LoseCard').hidden=true;
-    document.getElementById('match3ResultText').textContent=`Objetivos completos con ${this.moves} movimientos`;
-    document.getElementById('match3ResultReward').textContent=`+${result.reward??reward}`;
-    document.getElementById('match3ResultRank').textContent=result.rank||'';
+    this.renderWinResult({
+      moves:this.moves,
+      reward:result.reward??reward,
+      rank:result.rank||'Aprendiz Tiburón',
+      playerName:window.RetoTiburon?.getPlayerName?.()||'Jugador'
+    });
     this.resultEl.hidden=false;
     window.RetoTiburon?.playSfx?.('success');
     this.onFinish?.({won:true,reward:result.reward??reward,level:this.level});
