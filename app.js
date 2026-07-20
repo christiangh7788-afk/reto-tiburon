@@ -43,7 +43,7 @@ const RANKS=[
 {min:11,max:20,name:'Oficial Tiburón',icon:'★'},
 {min:21,max:29,name:'Comandante Tiburón',icon:'🏅'},
 {min:30,max:30,name:'Capitán Tiburón #1',icon:'👑'}];
-let audioUnlocked=false,pendingBonusLevel=0,lastCompletion=null,playerNameEditing=false;
+let audioUnlocked=false,pendingBonusLevel=0,lastCompletion=null,playerNameEditing=false,match3TestMode=false;
 const audioPrefs={music:true,sfx:true};
 const sounds={};
 const soundPaths={click:'assets/audio/click.wav',coin:'assets/audio/coin.wav',success:'assets/audio/success.wav',error:'assets/audio/error.wav',rank:'assets/audio/rank-up.wav'};
@@ -94,7 +94,9 @@ function initialState(demo){
   state.playerName=state.playerName||'Tiburón Max';
   state.day=6;state.coins=1250;state.streak=6;state.sales=18900;
   state.completed=Array.from({length:30},(_,i)=>i<6);
-  save();enterApp();unlockAudio();return;
+  save();enterApp();unlockAudio();
+  setTimeout(()=>{if(!$('featureDialog').open)$('featureDialog').showModal()},450);
+  return;
  }
  state.playerName='';state.day=0;state.coins=0;state.streak=0;state.sales=0;
  state.completed=Array(30).fill(false);save();showPlayerNameScreen(false);unlockAudio()
@@ -483,13 +485,77 @@ async function validateBonusMission(ev){
  }
 }
 
+
+function openFeatureCenter(){
+ openDrawer(false);
+ if(!$('featureDialog').open)$('featureDialog').showModal()
+}
+function testMusic(){
+ audioPrefs.music=true;
+ $('musicToggle').querySelector('b').textContent='Activada';
+ localStorage.setItem(AUDIO_KEY,JSON.stringify(audioPrefs));
+ unlockAudio();
+ const player=$('backgroundMusic');
+ player.currentTime=0;
+ player.volume=.45;
+ player.play().then(()=>toast('Reproduciendo Funk de ventas.')).catch(()=>toast('Toca nuevamente para permitir el audio.'))
+}
+function testEffects(){
+ audioUnlocked=true;
+ sfx('success');
+ setTimeout(()=>sfx('coin'),380);
+ toast('Efectos de éxito y moneda reproducidos.')
+}
+function testMatch3(){
+ if(!window.RetoMatch3){toast('El Match‑3 todavía está cargando. Intenta de nuevo.');return}
+ match3TestMode=true;
+ if($('featureDialog').open)$('featureDialog').close();
+ window.RetoMatch3.start({
+  level:Math.max(1,Math.min(30,state.day+1)),
+  onFinish:()=>renderMain()
+ })
+}
+async function forceAppRefresh(){
+ const accepted=confirm('Se limpiará únicamente el caché de la app. Tu progreso y evidencias se conservarán. ¿Continuar?');
+ if(!accepted)return;
+ try{
+  if('caches'in window){
+   const keys=await caches.keys();
+   await Promise.all(keys.map(key=>caches.delete(key)))
+  }
+  if('serviceWorker'in navigator){
+   const registrations=await navigator.serviceWorker.getRegistrations();
+   await Promise.all(registrations.map(reg=>reg.unregister()))
+  }
+ }catch(error){console.warn(error)}
+ const url=new URL(location.href);
+ url.searchParams.set('v','61');
+ url.searchParams.set('fresh',Date.now().toString());
+ location.replace(url.toString())
+}
+
 window.RetoTiburon={
  getRank:()=>rankFor().name,
  getPlayerName:()=>state.playerName||'Jugador',
  playSfx:sfx,
  toggleMusic(){audioPrefs.music=!audioPrefs.music;if(audioPrefs.music)unlockAudio();else $('backgroundMusic').pause();return audioPrefs.music},
- setMatch3Active(active){$('backgroundMusic').volume=active?.16:.34},
- addBonusCoins({level,reward,movesLeft,score}){const index=Math.max(0,Math.min(29,Number(level)-1));if(state.bonusPlayed[index])return{reward:0,rank:rankFor().name,alreadyPlayed:true};const r=Math.max(0,Math.round(Number(reward)||0));state.coins+=r;state.bonusPlayed[index]={won:true,reward:r,movesLeft,score,date:new Date().toISOString()};save();renderMain();sfx('coin');toast(`Ganaste ${r} netocoins en Match-3.`);return{reward:r,rank:rankFor().name}},
+ setMatch3Active(active){
+  $('backgroundMusic').volume=active?.16:.34;
+  if(!active)match3TestMode=false
+ },
+ addBonusCoins({level,reward,movesLeft,score}){
+  const r=Math.max(0,Math.round(Number(reward)||0));
+  if(match3TestMode){
+    toast(`Prueba completada: ${r} netocoins simulados.`);
+    return{reward:r,rank:rankFor().name,testMode:true}
+  }
+  const index=Math.max(0,Math.min(29,Number(level)-1));
+  if(state.bonusPlayed[index])return{reward:0,rank:rankFor().name,alreadyPlayed:true};
+  state.coins+=r;
+  state.bonusPlayed[index]={won:true,reward:r,movesLeft,score,date:new Date().toISOString()};
+  save();renderMain();sfx('coin');toast(`Ganaste ${r} netocoins en Match-3.`);
+  return{reward:r,rank:rankFor().name}
+ },
  getEvidencePhoto:getStoredEvidencePhoto,
  getEvidenceQueue:()=>({missions:state.evidence,bonusAccess:state.bonusAccess}),
  setEvidencePhotoUrl({kind,index,url}){
@@ -512,6 +578,12 @@ $('validateButton').onclick=openValidation;$('cancelValidation').onclick=()=>{$(
 $('rankingToggle').onclick=()=>{renderRanking();$('rankingDialog').showModal()};$('closeRanking').onclick=()=>$('rankingDialog').close();
 $('calendarButton').onclick=()=>{openDrawer(false);buildCalendar();$('calendarDialog').showModal()};$('closeCalendar').onclick=()=>$('calendarDialog').close();
 $('bonusGameDrawerButton').onclick=()=>{openDrawer(false);requestBonusAccess()};
+$('featureCenterButton').onclick=openFeatureCenter;
+$('closeFeatureDialog').onclick=()=>$('featureDialog').close();
+$('testMusicButton').onclick=testMusic;
+$('testEffectsButton').onclick=testEffects;
+$('testMatch3Button').onclick=testMatch3;
+$('refreshAppButton').onclick=forceAppRefresh;
 $('audioUnlockBanner').onclick=()=>{unlockAudio();toast('Música y efectos activados.')};
 $('musicToggle').onclick=()=>{audioPrefs.music=!audioPrefs.music;if(audioPrefs.music)unlockAudio();else $('backgroundMusic').pause();$('musicToggle').querySelector('b').textContent=audioPrefs.music?'Activada':'Silenciada';localStorage.setItem(AUDIO_KEY,JSON.stringify(audioPrefs))};
 $('effectsToggle').onclick=()=>{audioPrefs.sfx=!audioPrefs.sfx;$('effectsToggle').querySelector('b').textContent=audioPrefs.sfx?'Activados':'Silenciados';localStorage.setItem(AUDIO_KEY,JSON.stringify(audioPrefs))};
@@ -527,7 +599,7 @@ document.querySelectorAll('[data-category]').forEach(b=>b.onclick=()=>{const cat
 
 document.addEventListener('click',e=>{if(e.target.closest('button')){if(!audioUnlocked)unlockAudio();sfx('click')}},{capture:true});
 document.addEventListener('visibilitychange',()=>{if(document.hidden)$('backgroundMusic').pause();else if(audioUnlocked&&audioPrefs.music)$('backgroundMusic').play().catch(()=>{})});
-if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js?v=60').catch(()=>{}));
+if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js?v=61').catch(()=>{}));
 
 bindPhotoControl('mission');bindPhotoControl('bonus');
 initSounds();
@@ -537,9 +609,4 @@ const params=new URLSearchParams(location.search);
 const loaded=load();
 $('storeName').value=state.storeName||'Tienda Demo';
 $('storeCode').value=state.storeCode||'001';
-if(params.get('debug')==='name'){
- state.storeName='Tienda Demo';state.storeCode='001';state.playerName='Capitán Azul';showPlayerNameScreen(false)
-}else if(params.get('debug')==='main'){
- state.storeName='Tienda Demo';state.storeCode='001';state.playerName='Capitán Azul';
- state.day=6;state.coins=1250;state.streak=6;state.sales=18900;state.completed=Array.from({length:30},(_,i)=>i<6);enterApp()
-}else if(loaded){if(state.playerName)enterApp();else showPlayerNameScreen(false)}else if(params.get('demo')==='1'){state.storeName='Tienda Demo';state.storeCode='001';state.playerName='';state.demo=true;state.day=6;state.coins=1250;state.streak=6;state.sales=18900;state.completed=Array.from({length:30},(_,i)=>i<6);save();showPlayerNameScreen(false)}
+if(loaded){if(state.playerName)enterApp();else showPlayerNameScreen(false)}else if(params.get('demo')==='1'){state.storeName='Tienda Demo';state.storeCode='001';state.playerName='';state.demo=true;state.day=6;state.coins=1250;state.streak=6;state.sales=18900;state.completed=Array.from({length:30},(_,i)=>i<6);save();showPlayerNameScreen(false)}

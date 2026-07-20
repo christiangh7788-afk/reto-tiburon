@@ -1,0 +1,14 @@
+index.html: df49f9559b2b1f2f
+app.js: f61c236e9535ac33
+match3.js: 078adf78056f1978
+assets/audio/music-funk-de-ventas.mp3: 344a1e3845edb7bd
+
+click.wav: 4010 bytes
+coin.wav: 19006 bytes
+error.wav: 18566 bytes
+music-casual.wav: 705644 bytes
+music-funk-de-ventas.mp3: 388223 bytes
+music-weekly.wav: 705644 bytes
+rank-up.wav: 37970 bytes
+streak.wav: 35764 bytes
+success.wav: 46348 bytes

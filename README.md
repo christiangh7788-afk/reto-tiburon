@@ -1,36 +1,41 @@
-# Reto Tiburón V6.0 — versión completa
+# Reto Tiburón V6.1 — completa y comprobable
 
-Esta versión conserva como base las tres pantallas visuales aprobadas:
+La V6.0 hacía que las funciones nuevas parecieran ausentes porque el Match‑3
+estaba detrás del flujo de evidencias y el navegador podía seguir mostrando
+archivos del caché anterior.
 
-1. Registro de sucursal — El Rey de la Aventura.
-2. Elección de nombre — La aventura de Tiburón Max.
-3. Panel principal — Misiones diarias de venta.
+## Cómo comprobar esta versión
 
-## Funciones integradas
+1. Entra en **Modo demostración**.
+2. Se abrirá automáticamente el **Centro de pruebas V6.1**.
+3. Ahí puedes pulsar:
+   - Probar música de fondo.
+   - Probar efecto de éxito.
+   - Abrir Match‑3 ahora.
+4. Estas pruebas no cambian tus misiones ni tus netocoins.
 
-- 30 misiones de ventas.
-- netocoins y racha diaria.
-- Cinco rangos, hasta Capitán Tiburón #1.
-- Ranking de sucursales.
-- Música Funk de ventas y efectos.
-- Evidencia fotográfica obligatoria para cada misión.
-- Fotografías comprimidas y guardadas localmente en IndexedDB.
-- Campo `photoUrl` preparado para Google Drive/Sheets.
-- Celebración al cumplir una misión.
-- Mini misión “Entrega una distinción neto”.
-- Evidencia obligatoria para desbloquear Match‑3.
-- Tablero Match‑3 de 9 × 9.
-- Cohetes, bombas, bola de color y cascadas.
-- Bono de netocoins por superar Match‑3.
-- PWA instalable y funcionamiento sin conexión.
+El mismo Centro de pruebas también está disponible desde el menú lateral:
+**Probar sonidos y Match‑3**.
 
-## Publicar en GitHub
+## Flujo normal
 
-1. Descomprime el ZIP.
-2. Elimina o reemplaza todos los archivos actuales.
-3. Sube la carpeta `assets` completa.
-4. Abre:
+- Validar misión con fotografía obligatoria.
+- Ver celebración y rango.
+- Elegir jugar la bonificación.
+- Cumplir “Entrega una distinción neto” con fotografía.
+- Jugar Match‑3.
+- Ganar netocoins adicionales.
 
-https://christiangh7788-afk.github.io/reto-tiburon/?v=60
+## Si sigue apareciendo la versión anterior
 
-No mezcles archivos de V5.x o V3.x con esta versión.
+En el Centro de pruebas pulsa **Forzar actualización de la app**. Esa opción
+borra únicamente el caché y el service worker; conserva progreso y evidencias.
+
+También puedes abrir:
+
+https://christiangh7788-afk.github.io/reto-tiburon/?v=61
+
+## Publicar
+
+Descomprime el ZIP y reemplaza absolutamente todos los archivos del
+repositorio, incluida la carpeta `assets`.

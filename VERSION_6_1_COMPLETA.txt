@@ -1,0 +1,16 @@
+RETO TIBURÓN V6.1 COMPLETA
+================================
+Incluye:
+- Música Funk de ventas
+- 5 efectos de sonido
+- Match-3 9x9
+- 30 misiones
+- Evidencia fotográfica
+- Mini misión de acceso
+- Celebraciones y rangos
+- Centro de pruebas visible
+
+Prueba directa:
+1. Entra en modo demostración.
+2. Se abrirá el Centro de pruebas.
+3. Pulsa Probar música, Probar efecto o Abrir Match-3.

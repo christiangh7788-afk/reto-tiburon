@@ -6,8 +6,8 @@
   <meta name="theme-color" content="#03194f">
   <title>Reto Tiburón</title>
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="stylesheet" href="styles.css?v=60">
-  <link rel="stylesheet" href="match3.css?v=60">
+  <link rel="stylesheet" href="styles.css?v=61">
+  <link rel="stylesheet" href="match3.css?v=61">
 </head>
 <body>
   <!-- 1. REGISTRO DE SUCURSAL OFICIAL -->
@@ -71,6 +71,7 @@
   <aside id="drawer" class="drawer" aria-hidden="true">
     <button id="closeDrawer" class="drawer-close" type="button">×</button>
     <h2>Reto Tiburón</h2>
+    <div class="build-badge">V6.1 · COMPLETA</div>
     <p id="drawerPlayer">Jugador</p>
     <small id="drawerRank">Aprendiz Tiburón</small>
     <p id="drawerStore" class="drawer-store">Tienda</p>
@@ -78,6 +79,7 @@
     <button id="changePlayerNameButton" type="button">✏️ Cambiar nombre del jugador</button>
     <button id="calendarButton" type="button">📅 Misiones del mes</button>
     <button id="bonusGameDrawerButton" type="button">🎮 Reto de bonificación</button>
+    <button id="featureCenterButton" type="button">🧪 Probar sonidos y Match‑3</button>
     <button id="musicToggle" type="button">🎵 Música <b>Activada</b></button>
     <button id="effectsToggle" type="button">🔔 Efectos <b>Activados</b></button>
     <button id="resetButton" type="button">↺ Reiniciar progreso</button>
@@ -91,6 +93,28 @@
     <span>• Cumple la mini misión para desbloquear Match‑3.</span>
     <span>• La música seleccionada es Funk de ventas.</span>
   </div>
+
+  <!-- CENTRO DE PRUEBAS V6.1 -->
+  <dialog id="featureDialog" class="clean-dialog feature-dialog">
+    <section>
+      <button id="closeFeatureDialog" type="button" class="close">×</button>
+      <p class="eyebrow">VERSIÓN 6.1 COMPLETA</p>
+      <h2>Centro de pruebas</h2>
+      <p>Comprueba inmediatamente que la música, los efectos y el Match‑3 están incluidos. Estas pruebas no alteran tus misiones ni tus netocoins.</p>
+
+      <div class="feature-checks">
+        <div><span>🎵</span><strong>Música Funk de ventas</strong><small>Archivo integrado en assets/audio</small></div>
+        <div><span>🔔</span><strong>Efectos del juego</strong><small>Botones, monedas, éxito y ascenso</small></div>
+        <div><span>🎮</span><strong>Match‑3 9 × 9</strong><small>Objetivos, movimientos y potenciadores</small></div>
+      </div>
+
+      <button id="testMusicButton" class="primary" type="button">▶ Probar música de fondo</button>
+      <button id="testEffectsButton" class="secondary feature-blue" type="button">🔔 Probar efecto de éxito</button>
+      <button id="testMatch3Button" class="secondary feature-green" type="button">🎮 Abrir Match‑3 ahora</button>
+      <button id="refreshAppButton" class="secondary feature-refresh" type="button">↻ Forzar actualización de la app</button>
+      <small class="feature-note">El acceso normal al Match‑3 continúa apareciendo después de validar una misión y completar la mini misión con fotografía.</small>
+    </section>
+  </dialog>
 
   <!-- VALIDACIÓN DE MISIÓN -->
   <dialog id="validationDialog" class="clean-dialog evidence-dialog">
@@ -239,7 +263,7 @@
   <div id="toast" class="toast" aria-live="polite"></div>
   <audio id="backgroundMusic" preload="auto" loop src="assets/audio/music-funk-de-ventas.mp3"></audio>
 
-  <script src="app.js?v=60"></script>
-  <script src="match3.js?v=60"></script>
+  <script src="app.js?v=61"></script>
+  <script src="match3.js?v=61"></script>
 </body>
 </html>
